@@ -17,9 +17,14 @@ import pipes
 app = Flask(__name__)
 
 #GLOBALS
-baseDir = "<path to the folder the script is in with a trailing />"
-comicDir = "<path to comics folder>""
-staticDir = "<path to static folder. this is where comics will be unpacked>"
+baseDir = "/var/www/cbv/"
+comicDir = "/var/www/cbv/Comics/Comics/"
+staticDir = "/var/www/cbv/static/"
+#t = request.base_url
+#if "172.14" in str(t) or "hoth.system" in str(t):
+#	staticUrl = "http://172.14.0.103/cbv/"
+#else:
+#	staticUrl = "http://thisinformation.doesntexist.org:9999/cbv/"
 isDir = False
 isComic = False
 
@@ -98,19 +103,17 @@ def startComicSession(comicPath):
 
 def makeComicLinks(dirList, sessionDir, sessionNumber):
 	t = request.base_url
-
-	#CHANGE THIS TO MATCH YOUR SETTINGS 
-	if "<first two octetc of the local subnet xxx.xxx>" in str(t) or "<local domain name>" in str(t):
-        	staticUrl = "<internal URL>"
+	if "172.14" in str(t) or "hoth.system" in str(t):
+        	staticUrl = "http://172.14.0.103/cbv/"
 	else:   
-        	staticUrl = "<External URL>"
-
-
+        	staticUrl = "http://thisinformation.doesntexist.org:9999/cbv/"
 	s = "<html><body bgcolor=black>"
 	jpegList = []
 	for i in dirList:
 		if "jpg" in i or "JPG" in i or "jpeg" in i or "JPEG" in i:
 			jpegList.append(i)
+			#link = staticUrl + sessionDir.replace("/var/www/cbv/","") + "/" + i 
+			#s+="<img src='" + link + "' width=100% img><br>"
 		else:
 			if os.path.isdir(sessionDir + i):
 				subx = os.listdir(sessionDir + i)
@@ -118,6 +121,7 @@ def makeComicLinks(dirList, sessionDir, sessionNumber):
 				s += l
 	for l in sorted(jpegList):
 		link = staticUrl + sessionDir.replace("/var/www/cbv/","") + "/" + l
+		#s+= "<a href='" + link + "'>" + l + "</a><br>"
 		s+="<img src='" + link + "' width=100% img><br>"
 	s+="</body></html>"
 	return s
@@ -131,8 +135,10 @@ def makeLinks(dirList):
         else:
                 staticUrl = "http://thisinformation.doesntexist.org:9999/cbv/"
 	staticLogo = staticUrl + "logo.jpg"
+	staticLoading = staticUrl + "loading.gif"
 	s += "<center><img height=200px width=80% src=" + staticLogo + "></img></center>"
 	s += "<center><h2 style='color:white;'>Underground Comics</h2></center>"
+	s += "<center><div id='loading' style='display:none;'><img width=70% height=300px src='" + staticLoading + "'></img></div></center>"
 	for i in dirList:
 		if "cbz" in i or "cbr" in i:
 			fullUrl = request.url
@@ -142,10 +148,18 @@ def makeLinks(dirList):
 				link = request.base_url + "?comic=" + actualDir + "/" + str(i).replace("#","--h--")
 			else:
 				link = request + "?comic=" + i
-			s+="<a href='" + link + "' border=5><button style='width:100%;height:50;background-color:yellow;-moz-border-radius: 15px;border-radius: 15px;' type='button'>" + i.replace(".cbz","").replace(".cbr","") + "</button></a><br>"
+			s+="<a href='" + link + "' border=5><button onclick='document.getElementById(\"loading\").style.display=\"\"' style='width:100%;height:50;background-color:yellow;-moz-border-radius: 15px;border-radius: 15px;' type='button'>" + i.replace(".cbz","").replace(".cbr","") + "</button></a><br>"
 		else:
 			if not "DS_Store" in i:
-				dList.append(i)
+				if not "restricted" in i:
+					dList.append(i)
+			# fullUrl = request.url
+			# if 'dir' in request.query_string:
+			# 	dirQuery = request.args.get('dir')
+			# 	link = request.base_url + "?dir=" + dirQuery + "--and--" + i
+			# else:
+			# 	link = request.base_url + "?dir=" + i
+			# s+="<a href='" + link + "'>" + i + "</a><br>"
 	for l in sorted(dList):
 		fullUrl = request.url
 		if 'dir' in request.query_string:
