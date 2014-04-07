@@ -32,9 +32,23 @@ This is the first version
 
 VERSION HISTORY:
 
-v0.1 - Core Functionality, and some html styling. IT FUCKING WORKS!!
+v0.1a - Core Functionality, and some html styling. IT FUCKING WORKS!!
 
-v0.2 - Added Loading screen for unpacking comics
+v0.2a - Added Loading screen for unpacking comics
+
+v0.3b 
+	-Added Some basic application logging (incomplete)
+
+	-Added auto scroll to top on Comic Load and Entering a new directory
+
+	-Added support for GIF and PNG
+
+	-Corrected Logo and Loading to not rely on external address
+
+	-Added info div and link
+
+	-Added better error handling for running in production 
+
 
 HELP:
 

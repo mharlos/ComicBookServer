@@ -3,6 +3,8 @@ from flask import Flask, jsonify
 from flask import abort
 from flask import make_response
 from flask import request
+from logging.handlers import RotatingFileHandler
+from logging import Formatter
 import json
 import string
 import random
@@ -13,6 +15,7 @@ import zipfile
 import os.path
 from flask import render_template
 import pipes
+import time
 
 app = Flask(__name__)
 
@@ -20,6 +23,7 @@ app = Flask(__name__)
 baseDir = "<path to the folder the script is in with a trailing />"
 comicDir = "<path to comics folder>"
 staticDir = "<path to static folder. this is where comics will be unpacked>"
+LOG_FILE = "cbv.py"
 isDir = False
 isComic = False
 
@@ -54,6 +58,14 @@ def startComicSession(comicPath):
 	sessionNumber = 0 
 	sessionDir = ""
 	comicPath = comicDir + comicPath.replace("--h--","#")
+	
+	#LOGGING
+	ip = str(request.remote_addr)
+	n = time.strftime("%d/%m/%Y-%H:%M:%S")
+	logData = n + "\t" + ip + "\t" + comicPath + "\n"
+	with open("access.log", "a") as logFile:
+    		logFile.write(logData)
+	
 	i = 0
 	while i != 1:
 		sessionDir = staticDir + str(sessionNumber)
@@ -98,14 +110,17 @@ def startComicSession(comicPath):
 
 def makeComicLinks(dirList, sessionDir, sessionNumber):
 	t = request.base_url
-	if "172.14" in str(t) or "hoth.system" in str(t):
-        	staticUrl = "http://172.14.0.103/cbv/"
-	else:   
-        	staticUrl = "http://thisinformation.doesntexist.org:9999/cbv/"
-	s = "<html><body bgcolor=black>"
+
+	#CHANGE TO YOUR SETTINGS
+	if "<first two octetc of the local subnet xxx.xxx>" in str(t) or "<local domain name>" in str(t):
+                staticUrl = "<internal address>"
+        else:
+                staticUrl = "<external address>"
+
+	s = "<html><body onload='document.body.scrollTop = document.documentElement.scrollTop = 0;' bgcolor=black>"
 	jpegList = []
 	for i in dirList:
-		if "jpg" in i or "JPG" in i or "jpeg" in i or "JPEG" in i:
+		if "jpg" in i or "JPG" in i or "jpeg" in i or "JPEG" in i or "gif" in i or "png" in i:
 			jpegList.append(i)
 		else:
 			if os.path.isdir(sessionDir + i):
@@ -120,7 +135,7 @@ def makeComicLinks(dirList, sessionDir, sessionNumber):
 
 def makeLinks(dirList):
 	dList = []
-	s = "<html><body bgcolor=black>"
+	s = "<html><body onload='document.body.scrollTop = document.documentElement.scrollTop = 0;' bgcolor=black>"
 	t = request.base_url
 
 	#CHANGE TO YOUR SETTINGS
@@ -129,9 +144,10 @@ def makeLinks(dirList):
         else:
                 staticUrl = "<external address>"
 
-
-	staticLogo = staticUrl + "logo.jpg"
-	staticLoading = staticUrl + "loading.gif"
+	#staticLogo = staticUrl + "logo.jpg"
+	staticLogo = '/static/logo.jpg'
+	staticLoading = '/static/loading.gif'
+	#staticLoading = staticUrl + "loading.gif"
 	s += "<center><img height=200px width=80% src=" + staticLogo + "></img></center>"
 	s += "<center><h2 style='color:white;'>Underground Comics</h2></center>"
 	s += "<center><div id='loading' style='display:none;'><img width=70% height=300px src='" + staticLoading + "'></img></div></center>"
@@ -156,8 +172,18 @@ def makeLinks(dirList):
 			link = request.base_url + "?dir=" + dirQuery + "--and--" + l
 		else:
 			link = request.base_url + "?dir=" + l
+			#if "DC" in l:
+			#	s+="<center><a href=\"" + link + "\"><img src='/static/images/dc.jpg'></img></a></center><br>"
+				#s+="<a href='" + link + "' border=5><button style='width:100%;height:50;-moz-border-radius: 15px;border-radius: 15px;' type='button'><img width=150 height=50px src=/static/images/dc.jpg></img></button></a><br>"
+			#elif "Marvel" in l:
+			#	s+="<center><a href=\"" + link + "\"><img width=700px src='/static/images/marvel.jpg'></img></a></center><br>"
+				#s+="<a href='" + link + "' border=5><button style='width:100%;height:50;-moz-border-radius: 15px;border-radius: 15px;' type='button'>" + l + "</button></a><br>"
+			#else:
 		s+="<a href='" + link + "' border=5><button style='width:100%;height:50;-moz-border-radius: 15px;border-radius: 15px;' type='button'>" + l + "</button></a><br>"
+	
 	s+="<br><br><h5>written and designed by Matt<br>Hoth Server<br>He who whould eat the kernel must first crack the shell</h5></body></html>"
+	s+="<br><br><img width=32px height=32px style='position:absolute;top:5px;'onclick='document.getElementById(\"helpnotes\").style.display=\"\"' src='/static/info.png'></img>"
+	s+="<br><center><div id='helpnotes' style='display:none;color:white;'>Thank you for participating in the beta version of Comic Book Server<br> If you run into problems please document what happened and send me an email.<br>Enjoy and Excelsior!<br><br>Interested in the code? Check out the project on <a href='https://github.com/mharlos/ComicBookServer'>Github</a></div></center>"
 	return s
 
 #ENDPOINTS
@@ -181,9 +207,14 @@ def index():
 		return query
 	return query
 
-
-
+#ERROR HANDLING
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+@app.errorhandler(403)
+def access_denied(e):
+    return render_template('403.html'), 403
 
 
 if __name__ == '__main__':
-	app.run(debug = True, host='0.0.0.0',port=8085)
+	app.run(debug = False, host='0.0.0.0',port=8085)
