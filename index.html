@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Comicbookserver by mharlos</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Comicbookserver</h1>
+        <h2>A web API/Application that serves up CBR and CBZ comics and displays them in the browser.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/mharlos/ComicBookServer/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/mharlos/ComicBookServer/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/mharlos/ComicBookServer" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="comicbookserver" class="anchor" href="#comicbookserver"><span class="octicon octicon-link"></span></a>ComicBookServer</h1>
+
+<p>A web API/Application that serves up CBR and CBZ comics and displays them in the browser.</p>
+
+<h2>
+<a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span></a>DESCRIPTION:</h2>
+
+<p>This is a web API/Application wriiten in python and using flask. ( pip install flask ) </p>
+
+<p>This allows you to read your digital comic collection in a web browser on any device. </p>
+
+<p>In its current state it will take a folder of comics ( CBZ and CBR only right now ) and will allow a user to browse through all subdirectories and select comics.</p>
+
+<p>Once selected the comic is copied to a static folder, unpacked, embedded into some html and displayed. Each comic is served up from a unique folder.</p>
+
+<p>Currently you will want to clean out the unique folders generated in the static folder every once an a while. It does not have a janitor. </p>
+
+<h2>
+<a name="version-history" class="anchor" href="#version-history"><span class="octicon octicon-link"></span></a>VERSION HISTORY:</h2>
+
+<p><strong>v0.1a</strong> </p>
+
+<ul>
+<li>Core Functionality, and some html styling. IT FUCKING WORKS!!</li>
+</ul><p><strong>v0.2a</strong></p>
+
+<ul>
+<li>Added Loading screen for unpacking comics</li>
+</ul><p><strong>v0.3b</strong></p>
+
+<ul>
+<li>Added Some basic application logging (incomplete)</li>
+<li>Added auto scroll to top on Comic Load and Entering a new directory</li>
+<li>Added support for GIF and PNG</li>
+<li>Corrected Logo and Loading to not rely on external address</li>
+<li>Added info div and link</li>
+<li>Added better error handling for running in production </li>
+</ul><h2>
+<a name="help" class="anchor" href="#help"><span class="octicon octicon-link"></span></a>HELP:</h2>
+
+<p>Feel free to send me a message! I will be glad to explain my work.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
