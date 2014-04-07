@@ -17,14 +17,9 @@ import pipes
 app = Flask(__name__)
 
 #GLOBALS
-baseDir = "/var/www/cbv/"
-comicDir = "/var/www/cbv/Comics/Comics/"
-staticDir = "/var/www/cbv/static/"
-#t = request.base_url
-#if "172.14" in str(t) or "hoth.system" in str(t):
-#	staticUrl = "http://172.14.0.103/cbv/"
-#else:
-#	staticUrl = "http://thisinformation.doesntexist.org:9999/cbv/"
+baseDir = "<path to the folder the script is in with a trailing />"
+comicDir = "<path to comics folder>"
+staticDir = "<path to static folder. this is where comics will be unpacked>"
 isDir = False
 isComic = False
 
@@ -112,8 +107,6 @@ def makeComicLinks(dirList, sessionDir, sessionNumber):
 	for i in dirList:
 		if "jpg" in i or "JPG" in i or "jpeg" in i or "JPEG" in i:
 			jpegList.append(i)
-			#link = staticUrl + sessionDir.replace("/var/www/cbv/","") + "/" + i 
-			#s+="<img src='" + link + "' width=100% img><br>"
 		else:
 			if os.path.isdir(sessionDir + i):
 				subx = os.listdir(sessionDir + i)
@@ -121,7 +114,6 @@ def makeComicLinks(dirList, sessionDir, sessionNumber):
 				s += l
 	for l in sorted(jpegList):
 		link = staticUrl + sessionDir.replace("/var/www/cbv/","") + "/" + l
-		#s+= "<a href='" + link + "'>" + l + "</a><br>"
 		s+="<img src='" + link + "' width=100% img><br>"
 	s+="</body></html>"
 	return s
@@ -130,10 +122,14 @@ def makeLinks(dirList):
 	dList = []
 	s = "<html><body bgcolor=black>"
 	t = request.base_url
-        if "172.14" in str(t) or "hoth.system" in str(t):
-                staticUrl = "http://172.14.0.103/cbv/"
+
+	#CHANGE TO YOUR SETTINGS
+	if "<first two octetc of the local subnet xxx.xxx>" in str(t) or "<local domain name>" in str(t):
+                staticUrl = "<internal address>"
         else:
-                staticUrl = "http://thisinformation.doesntexist.org:9999/cbv/"
+                staticUrl = "<external address>"
+
+
 	staticLogo = staticUrl + "logo.jpg"
 	staticLoading = staticUrl + "loading.gif"
 	s += "<center><img height=200px width=80% src=" + staticLogo + "></img></center>"
@@ -153,13 +149,6 @@ def makeLinks(dirList):
 			if not "DS_Store" in i:
 				if not "restricted" in i:
 					dList.append(i)
-			# fullUrl = request.url
-			# if 'dir' in request.query_string:
-			# 	dirQuery = request.args.get('dir')
-			# 	link = request.base_url + "?dir=" + dirQuery + "--and--" + i
-			# else:
-			# 	link = request.base_url + "?dir=" + i
-			# s+="<a href='" + link + "'>" + i + "</a><br>"
 	for l in sorted(dList):
 		fullUrl = request.url
 		if 'dir' in request.query_string:
