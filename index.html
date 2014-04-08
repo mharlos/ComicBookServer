@@ -1,35 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Comic Book Server by mharlos</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
-    <title>Comicbookserver by mharlos</title>
   </head>
-
   <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/mharlos/ComicBookServer">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/mharlos/ComicBookServer/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/mharlos/ComicBookServer/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-    <header>
-      <div class="container">
-        <h1>Comicbookserver</h1>
-        <h2>A web API/Application that serves up CBR and CBZ comics and displays them in the browser.</h2>
+    <div class="wrapper">
 
-        <section id="downloads">
-          <a href="https://github.com/mharlos/ComicBookServer/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/mharlos/ComicBookServer/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/mharlos/ComicBookServer" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+      <section>
+        <div id="title">
+          <h1>Comic Book Server</h1>
+          <p>A Web Application Comic Book Viewer and Server </p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/mharlos">mharlos</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
 
-    <div class="container">
-      <section id="main_content">
         <h1>
-<a name="comicbookserver" class="anchor" href="#comicbookserver"><span class="octicon octicon-link"></span></a>ComicBookServer</h1>
+<a name="comic-book-server" class="anchor" href="#comic-book-server"><span class="octicon octicon-link"></span></a>Comic Book Server</h1>
 
 <p>A web API/Application that serves up CBR and CBZ comics and displays them in the browser.</p>
 
@@ -38,13 +48,15 @@
 
 <p>This is a web API/Application wriiten in python and using flask. ( pip install flask ) </p>
 
-<p>This allows you to read your digital comic collection in a web browser on any device. </p>
+<h4>
+<a name="this-allows-you-to-read-your-digital-comic-collection-in-a-web-browser-on-any-device" class="anchor" href="#this-allows-you-to-read-your-digital-comic-collection-in-a-web-browser-on-any-device"><span class="octicon octicon-link"></span></a>This allows you to read your digital comic collection in a web browser on any device.</h4>
 
 <p>In its current state it will take a folder of comics ( CBZ and CBR only right now ) and will allow a user to browse through all subdirectories and select comics.</p>
 
 <p>Once selected the comic is copied to a static folder, unpacked, embedded into some html and displayed. Each comic is served up from a unique folder.</p>
 
-<p>Currently you will want to clean out the unique folders generated in the static folder every once an a while. It does not have a janitor. </p>
+<h3>
+<a name="currently-you-will-want-to-clean-out-the-unique-folders-generated-in-the-static-folder-every-once-an-a-while-it-does-not-have-a-janitor" class="anchor" href="#currently-you-will-want-to-clean-out-the-unique-folders-generated-in-the-static-folder-every-once-an-a-while-it-does-not-have-a-janitor"><span class="octicon octicon-link"></span></a>Currently you will want to clean out the unique folders generated in the static folder every once an a while. It does not have a janitor.</h3>
 
 <h2>
 <a name="version-history" class="anchor" href="#version-history"><span class="octicon octicon-link"></span></a>VERSION HISTORY:</h2>
@@ -66,13 +78,21 @@
 <li>Corrected Logo and Loading to not rely on external address</li>
 <li>Added info div and link</li>
 <li>Added better error handling for running in production </li>
+</ul><p><strong>v0.4b</strong></p>
+
+<ul>
+<li>Removed dependency for hardcoded urls</li>
+<li>Updated loading screen </li>
+<li>Added tornado front end ( for production)</li>
+<li>Improved Logging</li>
 </ul><h2>
 <a name="help" class="anchor" href="#help"><span class="octicon octicon-link"></span></a>HELP:</h2>
 
 <p>Feel free to send me a message! I will be glad to explain my work.</p>
       </section>
-    </div>
 
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
   </body>
 </html>
