@@ -17,6 +17,7 @@ This is a web API/Application wriiten in python and using flask. ( pip install f
 
 This allows you to read your digital comic collection in a web browser on any device. 
 
+check out the instalation notes here : https://github.com/mharlos/ComicBookServer/wiki/Installation
 
 In its current state it will take a folder of comics ( CBZ and CBR only right now ) and will allow a user to browse through 
 all subdirectories and select comics. 
