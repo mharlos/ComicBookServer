@@ -36,7 +36,8 @@ v0.1a - Core Functionality, and some html styling. IT FUCKING WORKS!!
 
 v0.2a - Added Loading screen for unpacking comics
 
-v0.3b 
+v0.3b
+ 
 	-Added Some basic application logging (incomplete)
 
 	-Added auto scroll to top on Comic Load and Entering a new directory
@@ -49,6 +50,17 @@ v0.3b
 
 	-Added better error handling for running in production 
 
+v0.4b
+
+        -Removed dependency for hardcoded urls
+
+	-Updated loading screen 
+
+	-Abstracted views to templates
+
+	-Added tornado script balancer.py to start application using tornado	
+
+        -Added better error handling for running in production
 
 HELP:
 
