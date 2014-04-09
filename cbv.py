@@ -128,7 +128,7 @@ def makeLinks(dirList):
 			else: # ot already in a directory 
 				link = request.base_url + "?comic=" + i # generates link for a comic
 			# creates the anchor tag 	  
-			links += '<a class="cbrLink" href="%s" onclick="showLoading();">%s</a><br>' % (link, i.replace(".cbz","").replace(".cbr",""))
+			links += '<a class="cbrLink clickable" href="%s" onclick="showLoading();">%s</a><br>' % (link, i.replace(".cbz","").replace(".cbr",""))
 		elif not "DS_Store" in i and not "restricted" in i: # dont show
 					dList.append(i) # append dir name to dir list 
 	for l in sorted(dList): # attempt to sort dir list  ## THIS COULD BE DONE WAY BETTER - THIS DOESNT WORK
@@ -138,7 +138,7 @@ def makeLinks(dirList):
 		else: # not already in a dir 
 			link = request.base_url + "?dir=" + l # current dir
 		##generate href
-		links += '<a class="dirLink" href="%s">%s</a><br>' % (link, l)
+		links += '<a class="dirLink clickable" href="%s">%s</a><br>' % (link, l)
 	return render_template('list.html', links=links) # render list.html , pass it a list of anchor tags for every dir and comic
 
 #ENDPOINTS
