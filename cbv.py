@@ -113,7 +113,7 @@ def makeComicLinks(dirList, sessionDir):
 				l = makeComicLinks(subx, sessionDir + i) # try to display the comic again with the new dir as the dirlist 
 				images += l # l should equal a bunch of IMG tags for every jpg in the folder
 	for l in sorted(jpegList): # sort list of images ## THIS COULD BE DONE WAY BETTER 
-		images += '<img src="/%s/%s" width="100%"><br>' % (sessionDir, l) #creates IMG tag
+		images += '<img src="/%s/%s" width="100%%"><br>' % (sessionDir, l) #creates IMG tag
 	return render_template('comic.html', images=images) # renders comic.html and sends a string of all the IMG tags for every img in the session dir
 
 def makeLinks(dirList):

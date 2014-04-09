@@ -16,7 +16,7 @@ body {
 }
 
 #banner img {
-	width: 80%;
+	height: 200px;
 }
 
 h2 {
@@ -24,8 +24,8 @@ h2 {
 }
 
 #loading {
-	width: 70%;
 	position: fixed;
+	text-align: center;
 	top: 25%;
 }
 
