@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/static/styles/style.css">
 <script src="/static/scripts/index.js"></script>
 </head><body onload='scrollToTop();'>
-<img id="banner" src='/static/images/logo.jpg'></img>
+<div id="banner"><img src='/static/images/logo.jpg'></div>
 <h2>Underground Comics</h2>
 <img id="loading" style="display: none;" src='/static/images/loading.gif'>
 {{ links|safe }}
@@ -15,9 +15,9 @@
 </h5>
 <br>
 <br>
-<img id="helpLink" onclick='toggleHelp();' src='/static/images/info.png'>
+<img id="helpLink" class="clickable" onclick='toggleHelp();' src='/static/images/info.png'>
 <div id='helpContent' style='display: none;'>
-	<div style="float: right;" onclick="hideHelp();">X</div>
+	<div class="clickable" style="float: right;" onclick="hideHelp();">X</div>
 	Thank you for participating in the beta version of Comic Book Server<br> If you run into problems please document what happened and send me an email.<br>
 	Enjoy, and Excelsior!<br>
 	<br>

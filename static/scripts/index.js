@@ -4,13 +4,13 @@ function scrollToTop() {
 }
 
 function toggleHelp() {
-	var s = document.getElementById('helpnotes').style;
+	var s = document.getElementById('helpContent').style;
 	s.display = s.display ? '' : 'none';
 	return true;
 }
 
 function hideHelp() {
-	document.getElementById('helpnotes').style.display = 'none';
+	document.getElementById('helpContent').style.display = 'none';
 	return true;
 }
 
