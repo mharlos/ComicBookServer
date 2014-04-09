@@ -1,27 +1,14 @@
-<html><head>
-<link rel="stylesheet" href="/static/styles/style.css">
-<script src="/static/scripts/index.js"></script>
-</head><body onload='scrollToTop();'>
-<div id="banner"><img src='/static/images/logo.jpg'></div>
-<h2>Underground Comics</h2>
-<div id="loading" style="display: none;"><img src='/static/images/loading.gif'></div>
+<html>
+<body onload='document.body.scrollTop = document.documentElement.scrollTop = 0;' bgcolor=black>
+<center><img height=200px width=80% src='/static/images/logo.jpg'></img></center>
+<center><h2 style='color:white;'>Underground Comics</h2></center>
+<center><div id='loading' style='width:100%;height:200px;display:none;position: fixed;top:25%;'><img width=70% height=300px src='/static/images/loading.gif'></img></div></center>
 {{ links|safe }}
-<br>
-<br>
-<h5>
-	Written and designed by Matt.<br>
-	Hoth Server<br>
-	He who whould eat the kernel must first crack the shell.
-</h5>
-<br>
-<br>
-<img id="helpLink" class="clickable" onclick='toggleHelp();' src='/static/images/info.png'>
-<div id='helpContent' style='display: none;'>
-	<div class="clickable" style="float: right;" onclick="hideHelp();">X</div>
-	Thank you for participating in the beta version of Comic Book Server<br> If you run into problems please document what happened and send me an email.<br>
-	Enjoy, and Excelsior!<br>
-	<br>
-	Interested in the code? Check out the project on <a href='http://mharlos.github.io/ComicBookServer/'>Github</a>
-	<div class="clear"></div>
-</div>
-</body></html>
+<br><br>
+<h5>written and designed by Matt<br>Hoth Server<br>He who whould eat the kernel must first crack the shell</h5>
+<br><br>
+<img width=32px height=32px style='position:fixed;bottom:5px;'onclick='document.getElementById("helpnotes").style.display=""' src='/static/images/info.png'></img>
+<br><center><div id='helpnotes' style='background-color:black;position: fixed; left: 80%;bottom:5px; width:20%;color: white;display:none;'>Thank you for participating in the beta version of Comic Book Server<br> If you run into problems please document what happened and send me an email.<br>Enjoy and Excelsior!<br><br>Interested in the code? Check out the project on <a href='http://mharlos.github.io/ComicBookServer/'>Github</a></div></center>
+</body>
+</html>
+
