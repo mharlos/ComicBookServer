@@ -98,11 +98,11 @@ def startComicSession(comicPath):
 		p = subprocess.Popen(["./process.sh", str(thisSession)], stdout=subprocess.PIPE, stderr=subprocess.PIPE) # This process.sh unzips and unrars the comic
 		output, err = p.communicate() # execute command
 		x = os.listdir(sessionDir) # get a list of items in session dir
-		y = makeComicLinks(x, sessionDir, thisSession) # display the comic
+		y = makeComicLinks(x, sessionDir) # display the comic
 	return y # return the resuts of makeComicLinks
 
-def makeComicLinks(dirList, sessionDir, sessionNumber):
-	s = ""
+def makeComicLinks(dirList, sessionDir):
+	images = ""
 	jpegList = [] # Empty list for holding a list of images that make up the comic
 	for i in dirList: # check the session dir for images
 		if "jpg" in i or "JPG" in i or "jpeg" in i or "JPEG" in i or "gif" in i or "png" in i: # found an image
@@ -110,16 +110,15 @@ def makeComicLinks(dirList, sessionDir, sessionNumber):
 		else: # not an image. Proabably a DIR
 			if os.path.isdir(sessionDir + i): # if it is a DIR
 				subx = os.listdir(sessionDir + i) # get a list of whats in there
-				l = makeComicLinks(subx, sessionDir + i, sessionNumber) # try to display the comic again with the new dir as the dirlist 
-				s += l # l should equal a bunch of IMG tags for every jpg in the folder
+				l = makeComicLinks(subx, sessionDir + i) # try to display the comic again with the new dir as the dirlist 
+				images += l # l should equal a bunch of IMG tags for every jpg in the folder
 	for l in sorted(jpegList): # sort list of images ## THIS COULD BE DONE WAY BETTER 
-		link = "/" + sessionDir + "/" + l #creates link
-		s+="<img src='" + link + "' width=100% img><br>" #creates IMG tag
-	return render_template('comic.html', images=s) # renders comic.html and sends a string of all the IMG tags for every img in the session dir
+		images += '<img src="/%s/%s" width="100%"><br>' % (sessionDir, l) #creates IMG tag
+	return render_template('comic.html', images=images) # renders comic.html and sends a string of all the IMG tags for every img in the session dir
 
 def makeLinks(dirList):
 	dList = [] # empty list for directories
-	s = ""
+	links = ""
 	for i in dirList: #for each item in the dir
 		if "cbz" in i or "cbr" in i: # if it is a comic
 			if 'dir' in request.query_string: # are we already in a direcotry 
@@ -129,10 +128,8 @@ def makeLinks(dirList):
 			else: # ot already in a directory 
 				link = request.base_url + "?comic=" + i # generates link for a comic
 			# creates the anchor tag 	  
-			s+="<a href='" + link + "' border=5><button onclick='document.getElementById(\"loading\").style.display=\"\"' style='width:100%;height:50;background-color:yellow;-moz-border-radius: 15px;border-radius: 15px;' type='button'>" + i.replace(".cbz","").replace(".cbr","") + "</button></a><br>"
-		else: # not a dir
-			if not "DS_Store" in i: # dont show
-				if not "restricted" in i: # dont show
+			links += '<a class="cbrLink" href="%s" onclick="showLoading();">%s</a><br>' % (link, i.replace(".cbz","").replace(".cbr",""))
+		elif not "DS_Store" in i and not "restricted" in i: # dont show
 					dList.append(i) # append dir name to dir list 
 	for l in sorted(dList): # attempt to sort dir list  ## THIS COULD BE DONE WAY BETTER - THIS DOESNT WORK
 		if 'dir' in request.query_string: # are we already in a dir 
@@ -141,8 +138,8 @@ def makeLinks(dirList):
 		else: # not already in a dir 
 			link = request.base_url + "?dir=" + l # current dir
 		##generate href
-		s+="<a href='" + link + "' border=5><button style='width:100%;height:50;-moz-border-radius: 15px;border-radius: 15px;' type='button'>" + l + "</button></a><br>"
-	return render_template('list.html', links=s) # render list.html , pass it a list of anchor tags for every dir and comic
+		links += '<a class="dirLink" href="%s">%s</a><br>' % (link, l)
+	return render_template('list.html', links=links) # render list.html , pass it a list of anchor tags for every dir and comic
 
 #ENDPOINTS
 @app.route('/index.html') # main endpoint
