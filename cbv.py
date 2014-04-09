@@ -173,4 +173,4 @@ def access_denied(e):
 def server_error(e):
     return render_template('403.html'), 500 # render 403.html for 500 errors
 if __name__ == '__main__':
-	app.run(debug = False, host='0.0.0.0',port=8085) #DEBUG is off , HOST = listen all , port = port to listen on
+	app.run(debug = True, host='0.0.0.0',port=8086) #DEBUG is off , HOST = listen all , port = port to listen on
