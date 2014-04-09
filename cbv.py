@@ -12,20 +12,9 @@
 
 
 #!/usr/bin/python
-from flask import Flask, jsonify
-from flask import abort
-from flask import make_response
-from flask import request
-from logging.handlers import RotatingFileHandler
-from logging import Formatter
-from flask import render_template
-import json
-import string
+from flask import Flask, request, render_template
 import subprocess
 import os
-import urllib
-import os.path
-import pipes
 import time
 
 app = Flask(__name__)
@@ -44,7 +33,6 @@ isComic = False
 def checkQuery():
 	global isDir
 	global isComic
-	s = ""
 	if request.query_string:
 		if 'dir' in request.query_string: # is directory
 			dirQuery = request.args.get('dir')
@@ -114,7 +102,6 @@ def startComicSession(comicPath):
 	return y # return the resuts of makeComicLinks
 
 def makeComicLinks(dirList, sessionDir, sessionNumber):
-	t = request.base_url 
 	s = ""
 	jpegList = [] # Empty list for holding a list of images that make up the comic
 	for i in dirList: # check the session dir for images
@@ -133,10 +120,8 @@ def makeComicLinks(dirList, sessionDir, sessionNumber):
 def makeLinks(dirList):
 	dList = [] # empty list for directories
 	s = ""
-	t = request.base_url
 	for i in dirList: #for each item in the dir
 		if "cbz" in i or "cbr" in i: # if it is a comic
-			fullUrl = request.url
 			if 'dir' in request.query_string: # are we already in a direcotry 
 				dirQuery = request.args.get('dir') # current directory 
 				actualDir = dirQuery.replace("--and--","/") #current directory with all "--and-- replaced with "/""
@@ -150,7 +135,6 @@ def makeLinks(dirList):
 				if not "restricted" in i: # dont show
 					dList.append(i) # append dir name to dir list 
 	for l in sorted(dList): # attempt to sort dir list  ## THIS COULD BE DONE WAY BETTER - THIS DOESNT WORK
-		fullUrl = request.url
 		if 'dir' in request.query_string: # are we already in a dir 
 			dirQuery = request.args.get('dir') # get currrent dir 
 			link = request.base_url + "?dir=" + dirQuery + "--and--" + l # current dir "--and--"new dir - This keeps the higherarchy for later
