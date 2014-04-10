@@ -9,6 +9,7 @@
 body {
 	background-color: black;
 	color: white;
+	font-family: sans-serif;
 }
 
 #banner {
@@ -20,11 +21,17 @@ body {
 }
 
 h2 {
+	font-family: serif;
 	text-align: center;
+}
+
+.wordswordswords {
+	color: black;
 }
 
 #loading {
 	position: fixed;
+	width: 100%;
 	text-align: center;
 	top: 25%;
 }
@@ -45,28 +52,26 @@ h2 {
 	/*color: white;*/
 }
 
-.cbrLink {
+.button {
 	width: 100%;
 	height: 50px;
 	line-height: 50px;
-	background-color: yellow;
-	color: black;
 	text-decoration: none;
 	-moz-border-radius: 15px;
 	border-radius: 15px;
 	text-align: center;
 	display: block;
+	-webkit-box-shadow: inset 3px 3px 12px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: inset 3px 3px 12px 0px rgba(0,0,0,0.75);
+	box-shadow: inset 3px 3px 12px 0px rgba(0,0,0,0.75);
+}
+
+.cbrLink {
+	background-color: yellow;
+	color: black;
 }
 
 .dirLink {
-	width: 100%;
-	height: 50px;
-	line-height: 50px;
 	background-color: #AAA;
 	color: black;
-	text-decoration: none;
-	-moz-border-radius: 15px;
-	border-radius: 15px;
-	text-align: center;
-	display: block;
 }

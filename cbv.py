@@ -98,10 +98,10 @@ def startComicSession(comicPath):
 		p = subprocess.Popen(["./process.sh", str(thisSession)], stdout=subprocess.PIPE, stderr=subprocess.PIPE) # This process.sh unzips and unrars the comic
 		output, err = p.communicate() # execute command
 		x = os.listdir(sessionDir) # get a list of items in session dir
-		y = makeComicLinks(x, sessionDir) # display the comic
+		y = makeComicLinks(x, sessionDir, thisSession) # display the comic
 	return y # return the resuts of makeComicLinks
 
-def makeComicLinks(dirList, sessionDir):
+def makeComicLinks(dirList, sessionDir, thisSession):
 	images = ""
 	jpegList = [] # Empty list for holding a list of images that make up the comic
 	for i in dirList: # check the session dir for images
@@ -110,7 +110,7 @@ def makeComicLinks(dirList, sessionDir):
 		else: # not an image. Proabably a DIR
 			if os.path.isdir(sessionDir + i): # if it is a DIR
 				subx = os.listdir(sessionDir + i) # get a list of whats in there
-				l = makeComicLinks(subx, sessionDir + i) # try to display the comic again with the new dir as the dirlist 
+				l = makeComicLinks(subx, sessionDir + i, thisSession) # try to display the comic again with the new dir as the dirlist 
 				images += l # l should equal a bunch of IMG tags for every jpg in the folder
 	for l in sorted(jpegList): # sort list of images ## THIS COULD BE DONE WAY BETTER 
 		images += '<img src="/%s/%s" width="100%%"><br>' % (sessionDir, l) #creates IMG tag
@@ -128,7 +128,7 @@ def makeLinks(dirList):
 			else: # ot already in a directory 
 				link = request.base_url + "?comic=" + i # generates link for a comic
 			# creates the anchor tag 	  
-			links += '<a class="cbrLink clickable" href="%s" onclick="showLoading();">%s</a><br>' % (link, i.replace(".cbz","").replace(".cbr",""))
+			links += '<a class="cbrLink button clickable" href="%s" onclick="showLoading();">%s</a>' % (link, i.replace(".cbz","").replace(".cbr",""))
 		elif not "DS_Store" in i and not "restricted" in i: # dont show
 					dList.append(i) # append dir name to dir list 
 	for l in sorted(dList): # attempt to sort dir list  ## THIS COULD BE DONE WAY BETTER - THIS DOESNT WORK
@@ -138,7 +138,7 @@ def makeLinks(dirList):
 		else: # not already in a dir 
 			link = request.base_url + "?dir=" + l # current dir
 		##generate href
-		links += '<a class="dirLink clickable" href="%s">%s</a><br>' % (link, l)
+		links += '<a class="dirLink button clickable" href="%s">%s</a>' % (link, l)
 	return render_template('list.html', links=links) # render list.html , pass it a list of anchor tags for every dir and comic
 
 #ENDPOINTS
