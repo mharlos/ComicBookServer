@@ -177,13 +177,13 @@ def requestComic():
 	if request.query_string:
 		if 'comic' in request.query_string: # is directory
 			comic = request.args.get('comic')
-			with open("request.list", "a") as reqfile:
+			with open("static/request.txt", "a") as reqfile:
 				reqfile.write(str(comic) + "\n")
 		else:
-			with open("request.list", "a") as reqfile:
+			with open("static/request.txt", "a") as reqfile:
                                 reqfile.write("EMPTY REQUEST\n")
 	else:
-		with open("request.list", "a") as reqfile:
+		with open("static/request.txt", "a") as reqfile:
                                 reqfile.write("EMPTY REQUEST\n")
         return render_template('/successSubmit.html')
 	#return comic

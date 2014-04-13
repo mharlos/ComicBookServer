@@ -1,19 +1,22 @@
 <html><head>
 <link rel="stylesheet" href="/static/styles/style.css">
 <script src="/static/scripts/index.js"></script>
-</head><body onload='scrollToTop();' background={{ bg|safe }} style="background-repeat: no-repeat;background-size:100%,100%">
-<div id="banner"><img style="box-shadow: 0px 0px 10px #888;border-radius: 15px;" src='/static/images/logo.jpg'></div>
+</head><body onload='scrollToTop();' background={{ bg|safe }} style="background-repeat: no-repeat;height: 100%;">
+<div id="banner"><img style="box-shadow: 0px 0px 10px #888;border-radius: 15px;opacity:0.9" src='/static/images/logo.jpg'></div>
+<br>
 <div style="border: 1px solid green;background-color:blue;opacity:0.8;">
 <h2>Underground Comics</h2>
 </div>
+<br>
+<br>
 <div id="loading" style="display: none;"><img style="box-shadow: 0px 0px 10px #888;border-radius: 15px;" src='/static/images/loading.gif'></div>
 {{ links|safe }}
 <br>
 <br>
-<div style="width:300px;position:absolute;bottom: 5px;left: 0;right: 0;margin: auto;color:blue;">
+<div style="width:300px;position:relative;bottom: 5px;left:40%;">
 <center>
 <h5 class="wordswordswords" style="color:white;background-color:blue;opacity:0.7;">
-	Written and designed by Matt Harlos<br>
+	Designed and Coded by Matt Harlos - &copy;2014<br>
 </h5>
 </center>
 </div>
@@ -35,13 +38,14 @@
 <div style="position:absolute;top:20px;right:15px;">
 <a href='#' onclick="toggleReq();" class='reqbutton'>Request A Comic</a>
 </div>
-<div style="width:200px;background-color:black;display:none;position: fixed;width: 100%;text-align: center;top: 25%;z-index: 1000;" id="requests">
+<div style="width:400px;background-color:black;display:none;position: fixed;text-align: center;top: 25%;left:35%;margin:auto;z-index: 1000;" id="requests">
+<img src="/static/images/close.png" class="clickable" onclick="toggleReq();" width=20px height=20px style="position:absolute;top:5px;right:5px;"></img>
 <form action="/request.html" method="get">
   <h3>Submit A Request</h3><br>
   And I will try to find it<br><br>
-  Name of the Comic: <input type="text" name="comic"><br><br>
+  Name of the Comic:  <input type="text" name="comic"><br><br>
 
-  <input class="reqbutton" type="submit" value="Submit My Request">
+  <input class="reqbutton clickable" type="submit" value="Submit My Request">
 </form>
 </div>
 </body></html>
