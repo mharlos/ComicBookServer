@@ -42,6 +42,12 @@ Once selected the comic is copied to a static folder, unpacked, embedded into so
 * Abstracted views to templates
 * Improved Logging
 
+**v0.5b**
+* Large style improvements ( Thank you Colin )
+* Added ability to request a comic
+* Random background images
+* Added Home button
+
 ## HELP:
 
 Feel free to send me a message! I will be glad to explain my work.

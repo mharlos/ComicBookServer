@@ -1,14 +1,47 @@
-<html>
-<body onload='document.body.scrollTop = document.documentElement.scrollTop = 0;' bgcolor=black>
-<center><img height=200px width=80% src='/static/images/logo.jpg'></img></center>
-<center><h2 style='color:white;'>Underground Comics</h2></center>
-<center><div id='loading' style='width:100%;height:200px;display:none;position: fixed;top:25%;'><img width=70% height=300px src='/static/images/loading.gif'></img></div></center>
+<html><head>
+<link rel="stylesheet" href="/static/styles/style.css">
+<script src="/static/scripts/index.js"></script>
+</head><body onload='scrollToTop();' background={{ bg|safe }} style="background-repeat: no-repeat;background-size:100%,100%">
+<div id="banner"><img style="box-shadow: 0px 0px 10px #888;border-radius: 15px;" src='/static/images/logo.jpg'></div>
+<div style="border: 1px solid green;background-color:blue;opacity:0.8;">
+<h2>Underground Comics</h2>
+</div>
+<div id="loading" style="display: none;"><img style="box-shadow: 0px 0px 10px #888;border-radius: 15px;" src='/static/images/loading.gif'></div>
 {{ links|safe }}
-<br><br>
-<h5>written and designed by Matt<br>Hoth Server<br>He who whould eat the kernel must first crack the shell</h5>
-<br><br>
-<img width=32px height=32px style='position:fixed;bottom:5px;'onclick='document.getElementById("helpnotes").style.display=""' src='/static/images/info.png'></img>
-<br><center><div id='helpnotes' style='background-color:black;position: fixed; left: 80%;bottom:5px; width:20%;color: white;display:none;'>Thank you for participating in the beta version of Comic Book Server<br> If you run into problems please document what happened and send me an email.<br>Enjoy and Excelsior!<br><br>Interested in the code? Check out the project on <a href='http://mharlos.github.io/ComicBookServer/'>Github</a></div></center>
-</body>
-</html>
+<br>
+<br>
+<div style="width:300px;position:absolute;bottom: 5px;left: 0;right: 0;margin: auto;color:blue;">
+<center>
+<h5 class="wordswordswords" style="color:white;background-color:blue;opacity:0.7;">
+	Written and designed by Matt Harlos<br>
+</h5>
+</center>
+</div>
+<br>
+<br>
+<img id="helpLink" class="clickable" onclick='toggleHelp();' src='/static/images/info.png'>
+<div id='helpContent' style='display: none;'>
+	<div class="clickable" style="float: right;" onclick="hideHelp();">X</div>
+	Thank you for participating in the beta version of Comic Book Server<br> If you run into problems please document what happened and send me an email.<br>
+	Enjoy, and Excelsior!<br>
+	<br>
+	Interested in the code? Check out the project on <a href='http://mharlos.github.io/ComicBookServer/'>Github</a>
+	<div class="clear"></div>
+</div>
 
+<div style="position:absolute;top:20px;left:15px;">
+<a href='#' onclick="window.location='/index.html';" class='reqbutton'>Home</a><br><br><br><br>
+</div>
+<div style="position:absolute;top:20px;right:15px;">
+<a href='#' onclick="toggleReq();" class='reqbutton'>Request A Comic</a>
+</div>
+<div style="width:200px;background-color:black;display:none;position: fixed;width: 100%;text-align: center;top: 25%;z-index: 1000;" id="requests">
+<form action="/request.html" method="get">
+  <h3>Submit A Request</h3><br>
+  And I will try to find it<br><br>
+  Name of the Comic: <input type="text" name="comic"><br><br>
+
+  <input class="reqbutton" type="submit" value="Submit My Request">
+</form>
+</div>
+</body></html>

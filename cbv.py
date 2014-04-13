@@ -12,27 +12,17 @@
 
 
 #!/usr/bin/python
-from flask import Flask, jsonify
-from flask import abort
-from flask import make_response
-from flask import request
-from logging.handlers import RotatingFileHandler
-from logging import Formatter
-from flask import render_template
-import json
-import string
+from flask import Flask, request, render_template
 import subprocess
 import os
-import urllib
-import os.path
-import pipes
 import time
+import random
 
 app = Flask(__name__)
 
 #GLOBALS
 baseDir = "<full path to the folder this script is in>"
-comicDir = "<full path to comics>"
+comicDir = "<full path to comics folder>"
 LOG_FILE = "cbv.log"
 isDir = False
 isComic = False
@@ -44,7 +34,6 @@ isComic = False
 def checkQuery():
 	global isDir
 	global isComic
-	s = ""
 	if request.query_string:
 		if 'dir' in request.query_string: # is directory
 			dirQuery = request.args.get('dir')
@@ -113,9 +102,8 @@ def startComicSession(comicPath):
 		y = makeComicLinks(x, sessionDir, thisSession) # display the comic
 	return y # return the resuts of makeComicLinks
 
-def makeComicLinks(dirList, sessionDir, sessionNumber):
-	t = request.base_url 
-	s = ""
+def makeComicLinks(dirList, sessionDir, thisSession):
+	images = ""
 	jpegList = [] # Empty list for holding a list of images that make up the comic
 	for i in dirList: # check the session dir for images
 		if "jpg" in i or "JPG" in i or "jpeg" in i or "JPEG" in i or "gif" in i or "png" in i: # found an image
@@ -123,20 +111,17 @@ def makeComicLinks(dirList, sessionDir, sessionNumber):
 		else: # not an image. Proabably a DIR
 			if os.path.isdir(sessionDir + i): # if it is a DIR
 				subx = os.listdir(sessionDir + i) # get a list of whats in there
-				l = makeComicLinks(subx, sessionDir + i, sessionNumber) # try to display the comic again with the new dir as the dirlist 
-				s += l # l should equal a bunch of IMG tags for every jpg in the folder
+				l = makeComicLinks(subx, sessionDir + i, thisSession) # try to display the comic again with the new dir as the dirlist 
+				images += l # l should equal a bunch of IMG tags for every jpg in the folder
 	for l in sorted(jpegList): # sort list of images ## THIS COULD BE DONE WAY BETTER 
-		link = "/" + sessionDir + "/" + l #creates link
-		s+="<img src='" + link + "' width=100% img><br>" #creates IMG tag
-	return render_template('comic.html', images=s) # renders comic.html and sends a string of all the IMG tags for every img in the session dir
+		images += '<img src="/%s/%s" width="100%%"><br>' % (sessionDir, l) #creates IMG tag
+	return render_template('comic.html', images=images) # renders comic.html and sends a string of all the IMG tags for every img in the session dir
 
 def makeLinks(dirList):
 	dList = [] # empty list for directories
-	s = ""
-	t = request.base_url
+	links = ""
 	for i in dirList: #for each item in the dir
 		if "cbz" in i or "cbr" in i: # if it is a comic
-			fullUrl = request.url
 			if 'dir' in request.query_string: # are we already in a direcotry 
 				dirQuery = request.args.get('dir') # current directory 
 				actualDir = dirQuery.replace("--and--","/") #current directory with all "--and-- replaced with "/""
@@ -144,23 +129,25 @@ def makeLinks(dirList):
 			else: # ot already in a directory 
 				link = request.base_url + "?comic=" + i # generates link for a comic
 			# creates the anchor tag 	  
-			s+="<a href='" + link + "' border=5><button onclick='document.getElementById(\"loading\").style.display=\"\"' style='width:100%;height:50;background-color:yellow;-moz-border-radius: 15px;border-radius: 15px;' type='button'>" + i.replace(".cbz","").replace(".cbr","") + "</button></a><br>"
-		else: # not a dir
-			if not "DS_Store" in i: # dont show
-				if not "restricted" in i: # dont show
+			links += '<a class="cbrLink button clickable" href="%s" onclick="showLoading();">%s</a>' % (link, i.replace(".cbz","").replace(".cbr","").replace("_"," ").replace("-"," "))
+		elif not "DS_Store" in i and not "restricted" in i: # dont show
 					dList.append(i) # append dir name to dir list 
 	for l in sorted(dList): # attempt to sort dir list  ## THIS COULD BE DONE WAY BETTER - THIS DOESNT WORK
-		fullUrl = request.url
 		if 'dir' in request.query_string: # are we already in a dir 
 			dirQuery = request.args.get('dir') # get currrent dir 
 			link = request.base_url + "?dir=" + dirQuery + "--and--" + l # current dir "--and--"new dir - This keeps the higherarchy for later
 		else: # not already in a dir 
 			link = request.base_url + "?dir=" + l # current dir
 		##generate href
-		s+="<a href='" + link + "' border=5><button style='width:100%;height:50;-moz-border-radius: 15px;border-radius: 15px;' type='button'>" + l + "</button></a><br>"
-	return render_template('list.html', links=s) # render list.html , pass it a list of anchor tags for every dir and comic
+		links += '<a class="dirLink button clickable" href="%s">%s</a>' % (link, l.replace("_"," ").replace("-"," "))
+	bgpic = "/static/images/backgrounds/back" + str(random.randint(1,7)) + ".jpg"
+	return render_template('list.html', links=links, bg=bgpic) # render list.html , pass it a list of anchor tags for every dir and comic
 
 #ENDPOINTS
+@app.route('/') # main endpoint
+def front():
+	return render_template('front.html')
+
 @app.route('/index.html') # main endpoint
 def index():
 	global isDir
@@ -181,6 +168,25 @@ def index():
 		return query # should be comic.html
 	return query # catch all
 
+@app.route('/test.html') # main endpoint
+def addcomic():
+	return "<html><body>HERE</body></html>"
+@app.route('/request.html') # main endpoint
+def requestComic():
+	comic = ""
+	if request.query_string:
+		if 'comic' in request.query_string: # is directory
+			comic = request.args.get('comic')
+			with open("request.list", "a") as reqfile:
+				reqfile.write(str(comic) + "\n")
+		else:
+			with open("request.list", "a") as reqfile:
+                                reqfile.write("EMPTY REQUEST\n")
+	else:
+		with open("request.list", "a") as reqfile:
+                                reqfile.write("EMPTY REQUEST\n")
+        return render_template('/successSubmit.html')
+	#return comic
 #ERROR HANDLING
 @app.errorhandler(404)
 def page_not_found(e):
@@ -192,4 +198,4 @@ def access_denied(e):
 def server_error(e):
     return render_template('403.html'), 500 # render 403.html for 500 errors
 if __name__ == '__main__':
-	app.run(debug = False, host='0.0.0.0',port=8085) #DEBUG is off , HOST = listen all , port = port to listen on
+	app.run(debug = True, host='0.0.0.0',port=8086) #DEBUG is off , HOST = listen all , port = port to listen on
