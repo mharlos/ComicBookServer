@@ -84,11 +84,58 @@
 <li>Removed dependency for hardcoded urls</li>
 <li>Updated loading screen </li>
 <li>Added tornado front end ( for production)</li>
+<li>Abstracted views to templates</li>
 <li>Improved Logging</li>
 </ul><h2>
 <a name="help" class="anchor" href="#help"><span class="octicon octicon-link"></span></a>HELP:</h2>
 
 <p>Feel free to send me a message! I will be glad to explain my work.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>INSTALLATION</h2>
+
+<p>Make sure you open cbv.py and change the baseDir and comicDir
+so if you were 
+So :</p>
+
+<p><code>baseDir = "/var/ComicBookServer/"</code></p>
+
+<p><code>comicDir = "/var/ComicBookServer/Comics/"</code></p>
+
+<p><em>NOTE make sure that your comics are in folders in comicDir (I.E  /var/ComicBookServer/Comics/DC/some_comic.cbr) If you try and put comics directly in the root it may not work.</em> </p>
+
+<p>Edit the file process.sh and update the paths to point to the full path of ComicBookServer/static/sessions/</p>
+
+<p>So:
+<code>/var/ComicBookServer/static/sessions/$1</code></p>
+
+<p><em>NOTE make sure you leave the $1 on the end.</em> </p>
+
+<p>Ensure you have installed:</p>
+
+<ul>
+<li>python: <code>sudo apt-get install python</code>
+</li>
+<li>pip: <code>easy_install pip</code>
+</li>
+<li>
+<a href="http://flask.pocoo.org/">flask</a>: <code>sudo pip install flask</code>
+</li>
+<li>unzip: <code>sudo apt-get install unzip</code>
+</li>
+<li>unrar: <code>sudo apt-get install unrar</code>
+</li>
+</ul><p>Then <code>cd</code> into your basedir and execute : <code>python cbv.py</code> to run the flask app directly 
+or execute <code>python balancer.py</code> to execute the <a href="http://www.tornadoweb.org/en/stable/">tornado</a> server with the flask app contained inside it ( for production - this requires tornado be installed <code>sudo pip install tornado</code> ) </p>
+
+<p><em>NOTE: You may want to execute it in a screen session or something. It is not daemonized.</em></p>
+
+<p>Assuming no error, you should be able to go to <code>http://&lt;your-ip&gt;:8086/</code> and start using the app.</p>
+
+<h5>
+<a name="there-is-no-janitor-for-the-sessions-folder-you-may-want-to-go-into-comicbookserverstaticsessions-and-remove-all-of-the-directories--should-be-numbers-starting-at-zero--every-couple-of-days-or-do-like-i-did-and-set-up-a-cron-to-run-at-midnight" class="anchor" href="#there-is-no-janitor-for-the-sessions-folder-you-may-want-to-go-into-comicbookserverstaticsessions-and-remove-all-of-the-directories--should-be-numbers-starting-at-zero--every-couple-of-days-or-do-like-i-did-and-set-up-a-cron-to-run-at-midnight"><span class="octicon octicon-link"></span></a>There is no janitor for the sessions folder. You may want to go into <code>ComicBookServer/static/sessions/</code> and remove all of the directories ( should be numbers starting at zero ) every couple of days. Or do like I did and set up a cron to run at midnight.</h5>
+
+<p>Feel free to contact me if you have questions. </p>
       </section>
 
     </div>
