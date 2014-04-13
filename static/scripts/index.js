@@ -13,6 +13,11 @@ function hideHelp() {
 	document.getElementById('helpContent').style.display = 'none';
 	return true;
 }
+function toggleReq() {
+	var s = document.getElementById('requests').style;
+	s.display = s.display ? '' : 'none';
+	return true;
+}
 
 function showLoading() {
 	document.getElementById('loading').style.display = '';

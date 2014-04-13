@@ -42,6 +42,19 @@ Once selected the comic is copied to a static folder, unpacked, embedded into so
 * Abstracted views to templates
 * Improved Logging
 
+**v0.5b**
+* Large style improvements ( Thank you Colin )
+* Added ability to request a comic
+* Random background images
+* Added Home button
+
+**v0.5.1b**
+* Style fixes
+* I suck at CSS
+
+**v0.6b**
+* Added music to the home page ( random choice of 8 comic book TV and Movie theme songs songs ) 
+
 ## HELP:
 
 Feel free to send me a message! I will be glad to explain my work.
