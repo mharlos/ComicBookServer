@@ -36,7 +36,8 @@
 <a href='#' onclick="window.location='/index.html';" class='reqbutton'>Home</a><br><br><br><br>
 </div>
 <div style="position:absolute;top:20px;right:15px;">
-<a href='#' onclick="toggleReq();" class='reqbutton'>Request A Comic</a>
+<a href='#' onclick="toggleReq();" class='reqbutton'>Request A Comic</a><br><br><br>
+<a href='#' onclick="toggleIssue();" class='reqbutton'>Report a Problem</a>
 </div>
 <div style="width:400px;background-color:black;display:none;position: fixed;text-align: center;top: 25%;left:35%;margin:auto;z-index: 1000;" id="requests">
 <img src="/static/images/close.png" class="clickable" onclick="toggleReq();" width=20px height=20px style="position:absolute;top:5px;right:5px;"></img>
@@ -48,4 +49,16 @@
   <input class="reqbutton clickable" type="submit" value="Submit My Request">
 </form>
 </div>
+
+<div style="width:400px;background-color:black;display:none;position: fixed;text-align: center;top: 25%;left:35%;margin:auto;z-index: 1000;" id="issues">
+<img src="/static/images/close.png" class="clickable" onclick="toggleIssue();" width=20px height=20px style="position:absolute;top:5px;right:5px;"></img>
+<form action="/issue.html" method="get">
+  <h3>Report An Issue</h3><br>
+  And I will try to fix it<br><br>
+  Name of the Comic:  <input type="text" name="comic"><br>
+  Problem: <input type="text" name="issue"><br><br>
+  <input class="reqbutton clickable" type="submit" value="Submit Issue">
+</form>
+</div>
+
 </body></html>

@@ -145,9 +145,24 @@ def makeLinks(dirList):
 
 #ENDPOINTS
 @app.route('/') # main endpoint
+def preload():
+	return render_template('init.html')
+
+@app.route('/welcome.html') # main endpoint
 def front():
+	numComics = 0
+	try:
+		p = subprocess.Popen(["./countComics.sh", comicDir],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		output, err = p.communicate()
+		nums = str(output).split("\n")
+		numCbr = int(nums[0])
+		numCbz = int(nums[1])
+		numComics = numCbr + numCbz
+	except:
+		numComics = 9999
+	strComics = str(numComics)
 	bgsong = "/static/music/m" + str(random.randint(1,8)) + ".mp3"
-	return render_template('front.html', bg=bgsong)
+	return render_template('front.html', bg=bgsong, nc=strComics)
 
 @app.route('/index.html') # main endpoint
 def index():
@@ -187,6 +202,31 @@ def requestComic():
 		with open("static/request.txt", "a") as reqfile:
                                 reqfile.write("EMPTY REQUEST\n")
         return render_template('/successSubmit.html')
+
+@app.route('/issue.html') # main endpoint
+def reportIssues():
+        comic = ""
+	issue = ""
+        if request.query_string:
+                if 'comic' in request.query_string: # is directory
+                        comic = request.args.get('comic')
+			if 'issue' in request.query_string:
+				issue = request.args.get('issue')
+				comic = comic + "\t" + issue
+                        with open("static/issue.txt", "a") as reqfile:
+                                reqfile.write(str(comic) + "\n")
+                else:
+			if 'issue' in request.query_string:
+                                issue = request.args.get('issue')
+			else:
+				issue = "EMPTY REQUEST\n"
+                        with open("static/issue.txt", "a") as reqfile:
+                                reqfile.write(issue)
+        else:
+                with open("static/issue.txt", "a") as reqfile:
+                                reqfile.write("EMPTY REQUEST\n")
+        return render_template('/successSubmit.html')
+
 	#return comic
 #ERROR HANDLING
 @app.errorhandler(404)
