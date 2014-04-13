@@ -52,6 +52,9 @@ Once selected the comic is copied to a static folder, unpacked, embedded into so
 * Style fixes
 * I suck at CSS
 
+**v0.6b**
+* Added music to the home page ( random choice of 8 comic book TV and Movie theme songs songs ) 
+
 ## HELP:
 
 Feel free to send me a message! I will be glad to explain my work.

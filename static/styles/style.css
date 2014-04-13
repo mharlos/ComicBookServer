@@ -2,8 +2,7 @@
 	clear: both;
 }
 
-.reqbutton {
-   width: 150px;	
+.reqbutton {	
    border: 1px solid #0a3c59;
    background: #3e779d;
    background: -webkit-gradient(linear, left top, left bottom, from(#65a9d7), to(#3e779d));

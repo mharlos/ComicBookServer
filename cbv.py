@@ -146,7 +146,8 @@ def makeLinks(dirList):
 #ENDPOINTS
 @app.route('/') # main endpoint
 def front():
-	return render_template('front.html')
+	bgsong = "/static/music/m" + str(random.randint(1,8)) + ".mp3"
+	return render_template('front.html', bg=bgsong)
 
 @app.route('/index.html') # main endpoint
 def index():
