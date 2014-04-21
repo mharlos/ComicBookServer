@@ -67,9 +67,14 @@ Check the Installation notes out [HERE](https://github.com/mharlos/ComicBookServ
 * I may be tinkering with stuff too much . . . It's late
 
 **v0.8b**
-* Added seesion authentication using redis and beaker
+* Added session authentication using redis and beaker
 * More style stuff
 * Added jquery
+
+**v0.9b**
+* Sessions - Now sends user back to the dir they were last in. 
+* Sessions - Now remember the last comic the user read and displays it's name 
+* Sessions - Sessions are awesome.
 
 ## HELP:
 

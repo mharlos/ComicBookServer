@@ -106,17 +106,31 @@ def endSession():
 def checkQuery():
 	global isDir
 	global isComic
+	if useSessionAuth:
+		if not session.has_key('lastPath'):
+			session['lastPath'] = "--HOME--"
+		if not session.has_key('lastComic'):
+			session['lastComic'] = "--NONE--"
 	if request.query_string:
 		if 'dir' in request.query_string: # is directory
 			dirQuery = request.args.get('dir')
 			dirPath = str(dirQuery).replace("--and--","/") # used "--and--"" to seperate directories - replace that with "/"
 			isDir = True
+			if useSessionAuth:
+				session['lastPath'] = dirQuery
 			return dirPath  #return directory path
 		if 'comic' in request.query_string: # is a comic
+			print "Loading a comic"
 			comicPath = request.args.get('comic')
+			if useSessionAuth:
+				print "-Setting Last Comic\n"
+                                session['lastComic'] = comicPath
+				print comicPath
 			cSession = startComicSession(comicPath) #start a comic session
 			isComic = True
 			return cSession # return output of comic session
+	else:
+		session['lastPath'] = "--HOME--"	
 	return False
 
 ## this function initiates a session for reading a comic
@@ -213,7 +227,22 @@ def makeLinks(dirList):
 		##generate href
 		links += '<a class="dirLink button clickable" href="%s">%s</a>' % (link, l.replace("_"," ").replace("-"," "))
 	bgpic = "/static/images/backgrounds/back" + str(random.randint(1,7)) + ".jpg"
-	return render_template('list.html', links=links, bg=bgpic) # render list.html , pass it a list of anchor tags for every dir and comic
+	if useSessionAuth:
+		lastComic = session['lastComic']
+		print "Getting Last Comic - "
+		print lastComic
+	else:
+		print "No session means no last comic\n"
+		lastComic = "--NONE--" 
+	print "\n--NONE--" + ":" + str(lastComic) + ":"
+	if lastComic == "--NONE--":
+		lComic = ""
+	else:
+		pComic = str(lastComic).split("/")
+		pLen = len(pComic)
+		tComic = str(pComic[pLen-1]).replace(".cbz","").replace(".cbr","")
+		lComic = "<p style='color:yellow;'>The Last Comic You Read Was: " + str(tComic) + "</p>" 
+	return render_template('list.html', links=links, bg=bgpic, lc=lComic) # render list.html , pass it a list of anchor tags for every dir and comic
 
 #ENDPOINTS
 @app.route('/') # main endpoint
@@ -237,7 +266,15 @@ def front():
 	if useSessionAuth:
 		sStatus = checkSessionStatus()
 		if str(sStatus) == "LOGGEDIN":
-			authLink = '<a style="width:600px;" class="cbrLink button clickable" href="/index.html">Take Me To The Comics</a>'
+			if session.has_key('lastPath'):
+				tQuery = session['lastPath']
+				if str(tQuery) != "--HOME--":
+					aQuery = "?dir=" + str(tQuery)
+				else:
+					aQuery = ""
+			else:
+				aQuery = ""
+			authLink = '<a style="width:600px;" class="cbrLink button clickable" href="/index.html' + str(aQuery) +'">Take Me To The Comics</a>'
 		elif str(sStatus)=="LOGGEDOUT":
 			authLink = '<form action="welcome.html" method="get">Beta Key:  <input type="password" name="betaKey"><br><input type="submit" value="Login"></form><input type=button value="Request a Beta Key" onclick="document.getElementById(\'requestBeta\').style.display=\'\'"></input>'
 		elif str(sStatus) == "INVALIDKEY":
