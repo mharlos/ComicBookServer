@@ -35,6 +35,7 @@
           <p>A Web Application Comic Book Viewer and Server </p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/mharlos">mharlos</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
         </div>
 
         <h1>
@@ -56,6 +57,8 @@
 
 <h3>
 <a name="currently-you-will-want-to-clean-out-the-unique-folders-generated-in-the-static-folder-every-once-an-a-while-it-does-not-have-a-janitor" class="anchor" href="#currently-you-will-want-to-clean-out-the-unique-folders-generated-in-the-static-folder-every-once-an-a-while-it-does-not-have-a-janitor"><span class="octicon octicon-link"></span></a>Currently you will want to clean out the unique folders generated in the static folder every once an a while. It does not have a janitor.</h3>
+
+<p>Check the Installation notes out <a href="https://github.com/mharlos/ComicBookServer/wiki/Installation">HERE</a></p>
 
 <h2>
 <a name="version-history" class="anchor" href="#version-history"><span class="octicon octicon-link"></span></a>VERSION HISTORY:</h2>
@@ -101,56 +104,37 @@
 
 <ul>
 <li>Added music to the home page ( random choice of 8 comic book TV and Movie theme songs songs ) </li>
+</ul><p><strong>v0.7b</strong></p>
+
+<ul>
+<li>Added loading screen at "/" endpoint. Moved what was "/" to "/welcome.html"</li>
+<li>Added script for counting number of comics - added count to welcome.html </li>
+<li>Added "Report A Problem" feature and endpoint</li>
+<li>More style stuff</li>
+<li>I may be tinkering with stuff too much . . . It's late</li>
+</ul><p><strong>v0.8b</strong></p>
+
+<ul>
+<li>Added session authentication using redis and beaker</li>
+<li>More style stuff</li>
+<li>Added jquery</li>
+</ul><p><strong>v0.9b</strong></p>
+
+<ul>
+<li>Sessions - Now sends user back to the dir they were last in. </li>
+<li>Sessions - Now remember the last comic the user read and displays it's name </li>
+<li>Sessions - Sessions are awesome.</li>
+</ul><p><strong>v1.0b</strong></p>
+
+<ul>
+<li>Fixed Terrible sorting issue.</li>
+<li>Improved sessions</li>
+<li>Disabled a bunch of debug printing</li>
+<li>MILESTONE - Hit 10 Revisions - Fixed Sorting bug</li>
 </ul><h2>
 <a name="help" class="anchor" href="#help"><span class="octicon octicon-link"></span></a>HELP:</h2>
 
 <p>Feel free to send me a message! I will be glad to explain my work.</p>
-
-<h2>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
-
-<p>Make sure you open cbv.py and change the baseDir and comicDir
-so if you were 
-So :</p>
-
-<p><code>baseDir = "/var/ComicBookServer/"</code></p>
-
-<p><code>comicDir = "/var/ComicBookServer/Comics/"</code></p>
-
-<p><em>NOTE make sure that your comics are in folders in comicDir (I.E  /var/ComicBookServer/Comics/DC/some_comic.cbr) If you try and put comics directly in the root it may not work.</em> </p>
-
-<p>Edit the file process.sh and update the paths to point to the full path of ComicBookServer/static/sessions/</p>
-
-<p>So:
-<code>/var/ComicBookServer/static/sessions/$1</code></p>
-
-<p><em>NOTE make sure you leave the $1 on the end.</em> </p>
-
-<p>Ensure you have installed:</p>
-
-<ul>
-<li>python: <code>sudo apt-get install python</code>
-</li>
-<li>pip: <code>easy_install pip</code>
-</li>
-<li>
-<a href="http://flask.pocoo.org/">flask</a>: <code>sudo pip install flask</code>
-</li>
-<li>unzip: <code>sudo apt-get install unzip</code>
-</li>
-<li>unrar: <code>sudo apt-get install unrar</code>
-</li>
-</ul><p>Then <code>cd</code> into your basedir and execute : <code>python cbv.py</code> to run the flask app directly 
-or execute <code>python balancer.py</code> to execute the <a href="http://www.tornadoweb.org/en/stable/">tornado</a> server with the flask app contained inside it ( for production - this requires tornado be installed <code>sudo pip install tornado</code> ) </p>
-
-<p><em>NOTE: You may want to execute it in a screen session or something. It is not daemonized.</em></p>
-
-<p>Assuming no error, you should be able to go to <code>http://&lt;your-ip&gt;:8086/</code> and start using the app.</p>
-
-<h5>
-<a name="there-is-no-janitor-for-the-sessions-folder-you-may-want-to-go-into-comicbookserverstaticsessions-and-remove-all-of-the-directories--should-be-numbers-starting-at-zero--every-couple-of-days-or-do-like-i-did-and-set-up-a-cron-to-run-at-midnight" class="anchor" href="#there-is-no-janitor-for-the-sessions-folder-you-may-want-to-go-into-comicbookserverstaticsessions-and-remove-all-of-the-directories--should-be-numbers-starting-at-zero--every-couple-of-days-or-do-like-i-did-and-set-up-a-cron-to-run-at-midnight"><span class="octicon octicon-link"></span></a>There is no janitor for the sessions folder. You may want to go into <code>ComicBookServer/static/sessions/</code> and remove all of the directories ( should be numbers starting at zero ) every couple of days. Or do like I did and set up a cron to run at midnight.</h5>
-
-<p>Feel free to contact me if you have questions. </p>
       </section>
 
     </div>
