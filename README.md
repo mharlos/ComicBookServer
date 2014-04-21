@@ -18,6 +18,10 @@ Once selected the comic is copied to a static folder, unpacked, embedded into so
 ###Currently you will want to clean out the unique folders generated in the static folder every once an a while. It does not have a janitor. 
 
 
+Check the Installation notes out [HERE](https://github.com/mharlos/ComicBookServer/wiki/Installation)
+
+
+
 
 ## VERSION HISTORY:
 
@@ -62,6 +66,21 @@ Once selected the comic is copied to a static folder, unpacked, embedded into so
 * More style stuff
 * I may be tinkering with stuff too much . . . It's late
 
+**v0.8b**
+* Added session authentication using redis and beaker
+* More style stuff
+* Added jquery
+
+**v0.9b**
+* Sessions - Now sends user back to the dir they were last in. 
+* Sessions - Now remember the last comic the user read and displays it's name 
+* Sessions - Sessions are awesome.
+
+**v1.0b**
+* Fixed Terrible sorting issue.
+* Improved sessions
+* Disabled a bunch of debug printing
+* MILESTONE - Hit 10 Revisions - Fixed Sorting bug
 
 ## HELP:
 

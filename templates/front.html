@@ -1,5 +1,7 @@
 <html><head>
 <link rel="stylesheet" href="/static/styles/style.css">
+<script src="/static/scripts/jquery-1.11.0.min.js"></script>
+<script src="/static/scripts/jquery.backstretch.min.js"></script>
 <script src="/static/scripts/index.js"></script>
 <script type="text/javascript">
 function adjustSound(){
@@ -7,7 +9,7 @@ function adjustSound(){
 }
 </script>
 <link rel="icon" type="image/ico" href="/static/images/favicon.ico"/>
-</head><body onload="adjustSound()" background="/static/images/front.jpg" style="background-size:100%,100%;background-repeat: no-repeat">
+</head><body onload="adjustSound()" background="/static/images/front.jpg" style="background-color:#080808;background-size:100%,100%;background-repeat: no-repeat">
 <center>
 <div id="banner"><center><img style="border:0;height:200px;border-radius: 15px;" src='/static/images/logo.jpg'></center></div>
 <h2>Underground Comics</h2>
@@ -22,12 +24,26 @@ I hope you enjoy reading comics here! If you do, tell your friends!
 Thank you for participating in my Comic Book Server Beta</center></div>
 <br>
 <br>
-<a style="width:600px;" class="cbrLink button clickable" href="/index.html">Take Me To The Comics</a>
+{{ loggedin|safe }}
+<!--<a style="width:600px;" class="cbrLink button clickable" href="/index.html">Take Me To The Comics</a> -->
 <br>
-<audio id="theMusic" src={{ bg }} autoplay="autoplay" controls loop preload="auto">    
+<audio id="theMusic" src={{ bg }} controls autoplay loop preload="auto">    
 <p>Your browser does not support the audio element.</p>
 </audio>
 <br>
 <sub> Enjoy 1 of the <code color=yellow>{{ nc|safe }}</code> comics on the server</sub>
 </center>
+<!--<input type=button value="Request a Beta Key" onclick="document.getElementById('requestBeta').style.display=''"></input>-->
+<div class="infoModal" style="display:none;" id="requestBeta">
+<img src="/static/images/close.png" class="clickable" onclick="document.getElementById('requestBeta').style.display='none'" width=20px height=20px style="position:absolute;top:5px;right:5px;"></img>
+<form action="/welcome.html" method="get">
+  <center>
+  <h3>Request a Beta Key</h3><br>
+  <br><br>
+  Email Address:  <input type="text" name="requestKey"><br>
+  How Did you Find This: <input type="text" name="requestComment"><br><br>
+  <input class="reqbutton clickable" type="submit" value="Submit Request">
+  </center>
+</form>
+</div>
 </body></html>
