@@ -2,6 +2,25 @@
 	clear: both;
 }
 
+.infoModal {
+    background-color: #A9D0F5;
+    color: black;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    box-shadow: 0 0 20px 0 #222;
+    -webkit-box-shadow: 0 0 20px 0 #222;
+    -moz-box-shadow: 0 0 20px 0 #222;
+    height: 240px;
+    left: 50%;
+    margin: -120px 0 0 -160px;
+    padding: 10px;
+    position: fixed;
+    top: 50%;
+    width: 320px;
+    z-index: 1000;
+}	        
+
 .reqbutton {	
    border: 1px solid #0a3c59;
    background: #3e779d;
@@ -24,6 +43,24 @@
    font-family: helvetica, serif;
    text-decoration: none;
    vertical-align: middle;
+}
+.initDiv {
+   background-color: #A9D0F5;
+   color: black;
+   border-radius: 10px;
+   -webkit-border-radius: 10px;
+   -moz-border-radius: 10px;
+   box-shadow: 0 0 20px 0 #222;
+   -webkit-box-shadow: 0 0 20px 0 #222;
+   -moz-box-shadow: 0 0 20px 0 #222;
+   height: 240px;
+   left: 50%;
+   margin: -120px 0 0 -160px;
+   padding: 10px;
+   position: fixed;
+   top: 50%;
+   width: 320px;
+   z-index: 1000;
 }
 
 .clickable {
@@ -62,7 +99,6 @@ h2 {
 	text-align: center;
 	top: 25%;
 	z-index: 1000;
-	opacity: 0.8;
 }
 
 #helpLink {
@@ -72,13 +108,10 @@ h2 {
 	bottom: 5px;
 }
 
-#helpContent {
-	background-color: black;
+#helpContent1 {
 	position: fixed;
-	left: 80%;
 	bottom: 5px;
-	width: 20%;
-	/*color: white;*/
+	width: 600%;
 }
 
 .button {

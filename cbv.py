@@ -12,11 +12,29 @@
 
 
 #!/usr/bin/python
-from flask import Flask, request, render_template
+from flask import Flask, session, request, render_template
+from flask.sessions import SessionInterface
+from beaker.middleware import SessionMiddleware
 import subprocess
 import os
 import time
 import random
+import redis
+
+session_opts = {
+    'session.key': 'ComicBookServer',
+    'session.type': 'redis',
+    'session.url': '127.0.0.1:13001',
+    'session.data_dir': './static/sessions/',
+}
+
+class BeakerSessionInterface(SessionInterface):
+    def open_session(self, app, request):
+        session = request.environ['beaker.session']
+        return session
+
+    def save_session(self, app, session, response):
+        session.save()
 
 app = Flask(__name__)
 
@@ -26,11 +44,65 @@ comicDir = "<full path to comics folder>"
 LOG_FILE = "cbv.log"
 isDir = False
 isComic = False
+useSessionAuth = True
 
 
 #FUNCTIONS
 
 ## This function checks the query string params and determins if we are looking at a directory or a comic
+def checkSessionStatus():
+	keyMatch = False
+	status = "LOGGEDOUT"
+	if request.query_string:
+		if 'betaKey' in request.query_string:
+			with open("betaKeys") as authFile:
+				keys = authFile.readlines()
+			betaKey = request.args.get('betaKey')
+			for key in keys:
+				#print "-"+str(betaKey).replace("\n","") + "-" + str(key).replace("\n","") +"-"
+				
+				if str(betaKey).replace("\n","")  == str(key).replace("\n",""):
+					keyMatch = True
+					#print "Match"
+					status = "LOGGEDIN"
+			if not keyMatch:
+				status = "INVALIDKEY"
+		elif 'requestKey' in request.query_string:
+			requestKey = request.args.get('requestKey')
+			if 'requestComment' in request.query_string:
+				requestComment = request.args.get('requestComment')
+			else:
+				requestComment = ""
+			logData = str(requestKey) + " - " + str(requestComment) + "\n"
+			with open("request.log", "a") as logFile: #open log file
+                		logFile.write(logData) # write comic session
+			status = "REQUESTKEY"
+		else:
+			status = "LOGGEDOUT"
+			betaKey = "0000"
+	else:
+		status = "LOGGEDOUT"
+	pStatus = "LOGGEDOUT"
+	if not session.has_key('status'):
+		session['status'] = status
+		pStatus = "NOSESSION"
+	else:
+		pStatus = str(session['status'])
+	if str(pStatus) == "LOGGEDIN":
+		status = "LOGGEDIN"
+	session['status'] = str(status)
+	
+	if str(status) == "LOGGEDIN":
+		return "LOGGEDIN"
+	elif str(status) == "LOGGEDOUT":
+		return "LOGGEDOUT"
+	elif str(status) == "INVALIDKEY":
+		return "INVALIDKEY"
+	elif str(status) == "REQUESTKEY":
+		return "REQUESTKEY"
+def endSession():
+        session['status'] = "LOGGEDOUT"
+
 def checkQuery():
 	global isDir
 	global isComic
@@ -130,7 +202,7 @@ def makeLinks(dirList):
 				link = request.base_url + "?comic=" + i # generates link for a comic
 			# creates the anchor tag 	  
 			links += '<a class="cbrLink button clickable" href="%s" onclick="showLoading();">%s</a>' % (link, i.replace(".cbz","").replace(".cbr","").replace("_"," ").replace("-"," "))
-		elif not "DS_Store" in i and not "restricted" in i: # dont show
+		elif not "DS_Store" in i and not "restricted" in i and not "thumbs" in i: # dont show
 					dList.append(i) # append dir name to dir list 
 	for l in sorted(dList): # attempt to sort dir list  ## THIS COULD BE DONE WAY BETTER - THIS DOESNT WORK
 		if 'dir' in request.query_string: # are we already in a dir 
@@ -162,10 +234,26 @@ def front():
 		numComics = 9999
 	strComics = str(numComics)
 	bgsong = "/static/music/m" + str(random.randint(1,8)) + ".mp3"
-	return render_template('front.html', bg=bgsong, nc=strComics)
+	if useSessionAuth:
+		sStatus = checkSessionStatus()
+		if str(sStatus) == "LOGGEDIN":
+			authLink = '<a style="width:600px;" class="cbrLink button clickable" href="/index.html">Take Me To The Comics</a>'
+		elif str(sStatus)=="LOGGEDOUT":
+			authLink = '<form action="welcome.html" method="get">Beta Key:  <input type="password" name="betaKey"><br><input type="submit" value="Login"></form><input type=button value="Request a Beta Key" onclick="document.getElementById(\'requestBeta\').style.display=\'\'"></input>'
+		elif str(sStatus) == "INVALIDKEY":
+			authLink = '<p style="color:red;">Invalid Key</p><form action="welcome.html" method="get">Beta Key:<br><input type="password" name="betaKey"> <input type="submit" value="Login"></form><input type=button value="Request a Beta Key" onclick="document.getElementById(\'requestBeta\').style.display=\'\'"></input>'
+		elif str(sStatus) == "REQUESTKEY":
+			authLink = '<p style="color:yellow;">Your request has been submited !<br>Keep an eye out for an email with your beta key</p><form action="welcome.html" method="get">Beta Key:<br><input type="password" name="betaKey"><input type="submit" value="Login"></form>'
+	else:
+		authLink= '<a style="width:600px;" class="cbrLink button clickable" href="/index.html">Take Me To The Comics</a>'
+	return render_template('front.html', bg=bgsong, nc=strComics, loggedin=authLink)
 
 @app.route('/index.html') # main endpoint
 def index():
+	if useSessionAuth:
+		sStatus = checkSessionStatus()
+		if str(sStatus) != "LOGGEDIN":
+			return render_template('init.html')
 	global isDir
 	global isComic
 	query = checkQuery() # check query strings / decide what to do 
@@ -186,7 +274,8 @@ def index():
 
 @app.route('/test.html') # main endpoint
 def addcomic():
-	return "<html><body>HERE</body></html>"
+	session = checkSessionStatus()
+	return "<html><body>"+ str(session) + "</body></html>"
 @app.route('/request.html') # main endpoint
 def requestComic():
 	comic = ""
@@ -228,6 +317,13 @@ def reportIssues():
         return render_template('/successSubmit.html')
 
 	#return comic
+@app.route('/logout.html')
+def logout():
+	endSession()
+	return render_template('/init.html')
+	
+
+
 #ERROR HANDLING
 @app.errorhandler(404)
 def page_not_found(e):
@@ -239,4 +335,6 @@ def access_denied(e):
 def server_error(e):
     return render_template('403.html'), 500 # render 403.html for 500 errors
 if __name__ == '__main__':
+	app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
+	app.session_interface = BeakerSessionInterface()
 	app.run(debug = True, host='0.0.0.0',port=8086) #DEBUG is off , HOST = listen all , port = port to listen on

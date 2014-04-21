@@ -1,13 +1,22 @@
 <html><head>
 <link rel="stylesheet" href="/static/styles/style.css">
 <script src="/static/scripts/index.js"></script>
+<script src="/static/scripts/jquery-1.11.0.min.js"></script>
+<script src="/static/scripts/jquery.backstretch.min.js"></script>
+<script>
+$(document).ready(function () {
+	var bimage = "{{ bg|safe }}"
+	$.backstretch(bimage);
+});
+</script>
 <link rel="icon" type="image/ico" href="/static/images/favicon.ico"/>
-</head><body onload='scrollToTop();' background={{ bg|safe }} style="background-repeat: no-repeat;height: 100%;">
+</head>
+<body onload='scrollToTop();'>
 <div id="banner"><img style="box-shadow: 0px 0px 10px #888;border-radius: 15px;opacity:0.9" src='/static/images/logo.jpg'></div>
 <br>
-<div style="border: 1px solid green;background-color:blue;opacity:0.8;">
+<!--<div style="border: 1px solid green;background-color:blue;opacity:0.8;">
 <h2>Underground Comics</h2>
-</div>
+</div>-->
 <br>
 <br>
 <div id="loading" style="display: none;"><img style="box-shadow: 0px 0px 10px #888;border-radius: 15px;" src='/static/images/loading.gif'></div>
@@ -24,41 +33,53 @@
 <br>
 <br>
 <img id="helpLink" class="clickable" onclick='toggleHelp();' src='/static/images/info.png'>
-<div id='helpContent' style='display: none;'>
-	<div class="clickable" style="float: right;" onclick="hideHelp();">X</div>
-	Thank you for participating in the beta version of Comic Book Server<br> If you run into problems please document what happened and send me an email.<br>
-	Enjoy, and Excelsior!<br>
+<div id='helpContent' class="infoModal"  style='width:400px;display: none;left:46%;'>
+	<!--<div class="clickable" style="float: right;" onclick="hideHelp();">X</div>-->
+	<img src="/static/images/close.png" class="clickable" onclick="hideHelp();" width=20px height=20px style="position:absolute;top:5px;right:5px;"></img>
+	<center>
+	<br>
+	<br>
+	Thank you for participating in the beta<br> If you run into problems please use the<br> Report A Problem<br> button.<br>
+	<BR>Enjoy, and Excelsior!<br>
 	<br>
 	Interested in the code? Check out the project on <a href='http://mharlos.github.io/ComicBookServer/'>Github</a>
+	<br>
+	<br>
+	</center>
 	<div class="clear"></div>
 </div>
 
 <div style="position:absolute;top:20px;left:15px;">
-<a href='#' onclick="window.location='/index.html';" class='reqbutton'>Home</a><br><br><br><br>
+<a href='#' onclick="window.location='/index.html';" class='reqbutton'>Home</a><br><br><br>
+<a href='#' onclick="window.location='/logout.html';" class='reqbutton'>Log Out</a>
 </div>
 <div style="position:absolute;top:20px;right:15px;">
 <a href='#' onclick="toggleReq();" class='reqbutton'>Request A Comic</a><br><br><br>
 <a href='#' onclick="toggleIssue();" class='reqbutton'>Report a Problem</a>
 </div>
-<div style="width:400px;background-color:black;display:none;position: fixed;text-align: center;top: 25%;left:35%;margin:auto;z-index: 1000;" id="requests">
+<div class="infoModal" style="display:none;" id="requests">
 <img src="/static/images/close.png" class="clickable" onclick="toggleReq();" width=20px height=20px style="position:absolute;top:5px;right:5px;"></img>
 <form action="/request.html" method="get">
+  <center>
   <h3>Submit A Request</h3><br>
   And I will try to find it<br><br>
   Name of the Comic:  <input type="text" name="comic"><br><br>
 
   <input class="reqbutton clickable" type="submit" value="Submit My Request">
+  </ceter>
 </form>
 </div>
 
-<div style="width:400px;background-color:black;display:none;position: fixed;text-align: center;top: 25%;left:35%;margin:auto;z-index: 1000;" id="issues">
+<div class="infoModal" style="display:none;" id="issues">
 <img src="/static/images/close.png" class="clickable" onclick="toggleIssue();" width=20px height=20px style="position:absolute;top:5px;right:5px;"></img>
 <form action="/issue.html" method="get">
+  <center>
   <h3>Report An Issue</h3><br>
   And I will try to fix it<br><br>
   Name of the Comic:  <input type="text" name="comic"><br>
   Problem: <input type="text" name="issue"><br><br>
   <input class="reqbutton clickable" type="submit" value="Submit Issue">
+  </center>
 </form>
 </div>
 

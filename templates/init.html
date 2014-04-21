@@ -1,11 +1,20 @@
 <html>
 <head>
+<link rel="stylesheet" href="/static/styles/style.css">
 <link rel="icon" type="image/ico" href="/static/images/favicon.ico"/>
+<script src="/static/scripts/jquery-1.11.0.min.js"></script>
+<script src="/static/scripts/jquery.backstretch.min.js"></script>
+<script>
+$(document).ready(function () {
+        var bimage = "/static/images/initback.jpg"
+        $.backstretch(bimage);
+});
+</script>
 </head>
 
-<body style="background-color:black;" onload="window.location='/welcome.html';">
+<body onload="window.location='/welcome.html';">
 <center>
-<img width=100%  src="/static/images/please_wait.gif"></img
+<img height=100% width=100% style="opacity:0.8;" src="/static/images/please_wait.gif"></img
 </center>
 </body>
 </html>

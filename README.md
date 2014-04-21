@@ -18,6 +18,10 @@ Once selected the comic is copied to a static folder, unpacked, embedded into so
 ###Currently you will want to clean out the unique folders generated in the static folder every once an a while. It does not have a janitor. 
 
 
+Check the Installation notes out [HERE](https://github.com/mharlos/ComicBookServer/wiki/Installation)
+
+
+
 
 ## VERSION HISTORY:
 
@@ -62,6 +66,10 @@ Once selected the comic is copied to a static folder, unpacked, embedded into so
 * More style stuff
 * I may be tinkering with stuff too much . . . It's late
 
+**v0.8b**
+* Added seesion authentication using redis and beaker
+* More style stuff
+* Added jquery
 
 ## HELP:
 
