@@ -120,12 +120,12 @@ def checkQuery():
 				session['lastPath'] = dirQuery
 			return dirPath  #return directory path
 		if 'comic' in request.query_string: # is a comic
-			print "Loading a comic"
+			#print "Loading a comic"
 			comicPath = request.args.get('comic')
 			if useSessionAuth:
-				print "-Setting Last Comic\n"
+				#print "-Setting Last Comic\n"
                                 session['lastComic'] = comicPath
-				print comicPath
+				#print comicPath
 			cSession = startComicSession(comicPath) #start a comic session
 			isComic = True
 			return cSession # return output of comic session
@@ -189,6 +189,7 @@ def startComicSession(comicPath):
 	return y # return the resuts of makeComicLinks
 
 def makeComicLinks(dirList, sessionDir, thisSession):
+	#images = "<a class=\"cbrLink button clickable\" onclick=\"window.history.go(-2);\" href=\"#\">Back to Comics</a><br>"
 	images = ""
 	jpegList = [] # Empty list for holding a list of images that make up the comic
 	for i in dirList: # check the session dir for images
@@ -199,26 +200,42 @@ def makeComicLinks(dirList, sessionDir, thisSession):
 				subx = os.listdir(sessionDir + i) # get a list of whats in there
 				l = makeComicLinks(subx, sessionDir + i, thisSession) # try to display the comic again with the new dir as the dirlist 
 				images += l # l should equal a bunch of IMG tags for every jpg in the folder
-	for l in sorted(jpegList): # sort list of images ## THIS COULD BE DONE WAY BETTER 
-		images += '<img src="/%s/%s" width="100%%"><br>' % (sessionDir, l) #creates IMG tag
+	for v in sorted(jpegList): # sort list of images ## THIS COULD BE DONE WAY BETTER 
+		images += '<img src="/%s/%s" width="100%%"><br>' % (sessionDir, v) #creates IMG tag
+	#images += "<a class=\"cbrLink button clickable\" onclick=\"window.history.go(-2);\" href=\"#\">Back to Comics</a><br>"
 	return render_template('comic.html', images=images) # renders comic.html and sends a string of all the IMG tags for every img in the session dir
 
 def makeLinks(dirList):
 	dList = [] # empty list for directories
+	cList = []
 	links = ""
 	for i in dirList: #for each item in the dir
 		if "cbz" in i or "cbr" in i: # if it is a comic
-			if 'dir' in request.query_string: # are we already in a direcotry 
-				dirQuery = request.args.get('dir') # current directory 
-				actualDir = dirQuery.replace("--and--","/") #current directory with all "--and-- replaced with "/""
-				link = request.base_url + "?comic=" + actualDir + "/" + str(i).replace("#","--h--") #generates link for a comic 
-			else: # ot already in a directory 
-				link = request.base_url + "?comic=" + i # generates link for a comic
+			#if 'dir' in request.query_string: # are we already in a direcotry 
+			#	dirQuery = request.args.get('dir') # current directory 
+			#	actualDir = dirQuery.replace("--and--","/") #current directory with all "--and-- replaced with "/""
+			#	link = request.base_url + "?comic=" + actualDir + "/" + str(i).replace("#","--h--") #generates link for a comic 
+			#else: # ot already in a directory 
+			#	link = request.base_url + "?comic=" + i # generates link for a comic
 			# creates the anchor tag 	  
-			links += '<a class="cbrLink button clickable" href="%s" onclick="showLoading();">%s</a>' % (link, i.replace(".cbz","").replace(".cbr","").replace("_"," ").replace("-"," "))
+			#links += '<a class="cbrLink button clickable" href="%s" onclick="showLoading();">%s</a>' % (link, i.replace(".cbz","").replace(".cbr","").replace("_"," ").replace("-"," "))
+			cList.append(i)
 		elif not "DS_Store" in i and not "restricted" in i and not "thumbs" in i: # dont show
-					dList.append(i) # append dir name to dir list 
-	for l in sorted(dList): # attempt to sort dir list  ## THIS COULD BE DONE WAY BETTER - THIS DOESNT WORK
+					dList.append(i) # append dir name to dir list
+	cList.sort()
+	#print cList
+	for k in cList:
+		if 'dir' in request.query_string: # are we already in a direcotry
+        		dirQuery = request.args.get('dir') # current directory
+               		actualDir = dirQuery.replace("--and--","/") #current directory with all "--and-- replaced with "/""
+               		link = request.base_url + "?comic=" + actualDir + "/" + str(k).replace("#","--h--") #generates link for a comic
+        	else: # ot already in a directory
+                	link = request.base_url + "?comic=" + k # generates link for a comic
+                	# creates the anchor tag
+        	links += '<a class="cbrLink button clickable" href="%s" onclick="showLoading();">%s</a>' % (link, k.replace(".cbz","").replace(".cbr","").replace("_"," ").replace("-"," ")) 
+	dList.sort()
+	#print dList
+	for l in dList: # attempt to sort dir list  ## THIS COULD BE DONE WAY BETTER - THIS DOESNT WORK
 		if 'dir' in request.query_string: # are we already in a dir 
 			dirQuery = request.args.get('dir') # get currrent dir 
 			link = request.base_url + "?dir=" + dirQuery + "--and--" + l # current dir "--and--"new dir - This keeps the higherarchy for later
@@ -229,19 +246,19 @@ def makeLinks(dirList):
 	bgpic = "/static/images/backgrounds/back" + str(random.randint(1,7)) + ".jpg"
 	if useSessionAuth:
 		lastComic = session['lastComic']
-		print "Getting Last Comic - "
-		print lastComic
+		#print "Getting Last Comic - "
+		#print lastComic
 	else:
-		print "No session means no last comic\n"
+		#print "No session means no last comic\n"
 		lastComic = "--NONE--" 
-	print "\n--NONE--" + ":" + str(lastComic) + ":"
+	#print "\n--NONE--" + ":" + str(lastComic) + ":"
 	if lastComic == "--NONE--":
 		lComic = ""
 	else:
 		pComic = str(lastComic).split("/")
 		pLen = len(pComic)
 		tComic = str(pComic[pLen-1]).replace(".cbz","").replace(".cbr","")
-		lComic = "<p style='color:yellow;'>The Last Comic You Read Was: " + str(tComic) + "</p>" 
+		lComic = "<p style='color:yellow;'>The Last Comic You Read Was: " + str(tComic).replace("--h--","#").replace("_"," ").replace("-"," ") + "</p>" 
 	return render_template('list.html', links=links, bg=bgpic, lc=lComic) # render list.html , pass it a list of anchor tags for every dir and comic
 
 #ENDPOINTS

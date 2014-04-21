@@ -76,6 +76,12 @@ Check the Installation notes out [HERE](https://github.com/mharlos/ComicBookServ
 * Sessions - Now remember the last comic the user read and displays it's name 
 * Sessions - Sessions are awesome.
 
+**v1.0b**
+* Fixed Terrible sorting issue.
+* Improved sessions
+* Disabled a bunch of debug printing
+* MILESTONE - Hit 10 Revisions - Fixed Sorting bug
+
 ## HELP:
 
 Feel free to send me a message! I will be glad to explain my work.
