@@ -18,6 +18,11 @@ function toggleReq() {
 	s.display = s.display ? '' : 'none';
 	return true;
 }
+function toggleIssue() {
+        var s = document.getElementById('issues').style;
+        s.display = s.display ? '' : 'none';
+        return true;
+}
 
 function showLoading() {
 	document.getElementById('loading').style.display = '';

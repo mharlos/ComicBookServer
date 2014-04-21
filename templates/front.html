@@ -6,6 +6,7 @@ function adjustSound(){
 	document.getElementById('theMusic').volume=.2;
 }
 </script>
+<link rel="icon" type="image/ico" href="/static/images/favicon.ico"/>
 </head><body onload="adjustSound()" background="/static/images/front.jpg" style="background-size:100%,100%;background-repeat: no-repeat">
 <center>
 <div id="banner"><center><img style="border:0;height:200px;border-radius: 15px;" src='/static/images/logo.jpg'></center></div>
@@ -26,5 +27,7 @@ Thank you for participating in my Comic Book Server Beta</center></div>
 <audio id="theMusic" src={{ bg }} autoplay="autoplay" controls loop preload="auto">    
 <p>Your browser does not support the audio element.</p>
 </audio>
+<br>
+<sub> Enjoy 1 of the <code color=yellow>{{ nc|safe }}</code> comics on the server</sub>
 </center>
 </body></html>

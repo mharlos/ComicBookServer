@@ -55,6 +55,14 @@ Once selected the comic is copied to a static folder, unpacked, embedded into so
 **v0.6b**
 * Added music to the home page ( random choice of 8 comic book TV and Movie theme songs songs ) 
 
+**v0.7b**
+* Added loading screen at "/" endpoint. Moved what was "/" to "/welcome.html"
+* Added script for counting number of comics - added count to welcome.html 
+* Added "Report A Problem" feature and endpoint
+* More style stuff
+* I may be tinkering with stuff too much . . . It's late
+
+
 ## HELP:
 
 Feel free to send me a message! I will be glad to explain my work.
