@@ -1,0 +1,2 @@
+#!/bin/bash
+cd /home/bruce/ComicBookServer/ && kill $(cat twistd.pid)

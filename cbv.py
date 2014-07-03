@@ -20,11 +20,10 @@ import os
 import time
 import random
 import redis
-
 session_opts = {
     'session.key': 'ComicBookServer',
     'session.type': 'redis',
-    'session.url': '127.0.0.1:13001',
+    'session.url': '127.0.0.1:6379',
     'session.data_dir': './static/sessions/',
 }
 
@@ -37,10 +36,9 @@ class BeakerSessionInterface(SessionInterface):
         session.save()
 
 app = Flask(__name__)
-
+app.secret = "<somethingsupersecret>"
 #GLOBALS
-baseDir = "<full path to the folder this script is in>"
-comicDir = "<full path to comics folder>"
+comicDir = "<full path to comics>"
 LOG_FILE = "cbv.log"
 isDir = False
 isComic = False
@@ -141,6 +139,7 @@ def startComicSession(comicPath):
 	
 	#LOGGING
 	ip = str(request.remote_addr) #get IP
+	session['ip'] = str(ip)
 	n = time.strftime("%d/%m/%Y-%H:%M:%S") # get timedate now 
 	logData = n + "\t" + ip + "\t" + comicPath + "\n" # what to write to the log
 	with open("access.log", "a") as logFile: #open log file
@@ -154,6 +153,7 @@ def startComicSession(comicPath):
 		else: # not a session 
 			os.makedirs(sessionDir) # create session dir 
 			thisSession = sessionNumber # set session number
+			session['sessionNumber'] = thisSession
 			i =1 # session flag = true
 	sessionDir = sessionDir + "/" # full path to session folder
 	p = subprocess.Popen(["cp", comicPath, sessionDir ], stdout=subprocess.PIPE, stderr=subprocess.PIPE) # copy comic to session folder
@@ -268,17 +268,17 @@ def preload():
 
 @app.route('/welcome.html') # main endpoint
 def front():
-	numComics = 0
-	try:
-		p = subprocess.Popen(["./countComics.sh", comicDir],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		output, err = p.communicate()
-		nums = str(output).split("\n")
-		numCbr = int(nums[0])
-		numCbz = int(nums[1])
-		numComics = numCbr + numCbz
-	except:
-		numComics = 9999
-	strComics = str(numComics)
+	numComics = 10000
+	#try:
+		#p = subprocess.Popen(["./countComics.sh", comicDir],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		#output, err = p.communicate()
+		#nums = str(output).split("\n")
+		#numCbr = int(nums[0])
+		#numCbz = int(nums[1])
+		#numComics = numCbr + numCbz
+	#except:
+		#numComics = 9999
+	strComics = str(numComics) + "+"
 	bgsong = "/static/music/m" + str(random.randint(1,8)) + ".mp3"
 	if useSessionAuth:
 		sStatus = checkSessionStatus()
@@ -388,7 +388,7 @@ def access_denied(e):
 @app.errorhandler(500)
 def server_error(e):
     return render_template('403.html'), 500 # render 403.html for 500 errors
-if __name__ == '__main__':
-	app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
-	app.session_interface = BeakerSessionInterface()
-	app.run(debug = True, host='0.0.0.0',port=8086) #DEBUG is off , HOST = listen all , port = port to listen on
+#if __name__ == '__main__':
+app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
+app.session_interface = BeakerSessionInterface()
+#app.run(debug = True, host='0.0.0.0',port=8080) #DEBUG is off , HOST = listen all , port = port to listen on
