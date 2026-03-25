@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+venv/
+.venv/
+env/
+.env
+
+# Flask
+instance/
+.webassets-cache
+flask_session/
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+.npm/
+
+# Logs & runtime
+*.log
+process.log
+access.log
+static/request.txt
+static/issue.txt
+
+# Comic sessions (runtime-generated)
+static/sessions/*/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Twisted
+twistd.pid

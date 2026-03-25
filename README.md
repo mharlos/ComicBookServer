@@ -1,87 +1,206 @@
-Comic Book Server
-===============
+# ComicBook Server
 
-A web API/Application that serves up CBR and CBZ comics and displays them in the browser.
+A self-hosted web application for browsing and reading digital comic books (CBR and CBZ) in any modern browser.
 
+**Stack:** Python 3 / Flask REST API · React 18 · Vite · Tailwind CSS
 
-## DESCRIPTION:
+---
 
-This is a web API/Application wriiten in python and using flask. ( pip install flask ) 
+## Features
 
-####This allows you to read your digital comic collection in a web browser on any device. 
+- Browse your comic library with a clean, dark-themed UI
+- Read CBR and CBZ comics right in the browser — page by page
+- Keyboard navigation in the reader (← → Esc)
+- Beta-key access control
+- Submit comic requests and bug reports
+- Fully responsive — works on desktop, tablet, and mobile
 
+---
 
-In its current state it will take a folder of comics ( CBZ and CBR only right now ) and will allow a user to browse through all subdirectories and select comics.
+## Requirements
 
-Once selected the comic is copied to a static folder, unpacked, embedded into some html and displayed. Each comic is served up from a unique folder.
+| Tool | Version |
+|------|---------|
+| Python | 3.10+ |
+| Node.js | 18+ |
+| npm | 9+ |
+| unzip | any |
+| unrar | any |
 
-###Currently you will want to clean out the unique folders generated in the static folder every once an a while. It does not have a janitor. 
+---
 
+## Quick Start
 
-Check the Installation notes out [HERE](https://github.com/mharlos/ComicBookServer/wiki/Installation)
+### 1. Clone the repo
 
+```bash
+git clone https://github.com/mharlos/comicbookserver.git
+cd comicbookserver
+```
 
+### 2. Set up the Python backend
 
+```bash
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-## VERSION HISTORY:
+### 3. Build the React frontend
 
-**v0.1a** 
-* Core Functionality, and some html styling. IT FUCKING WORKS!!
+```bash
+cd frontend
+npm install
+npm run build
+cd ..
+```
 
-**v0.2a**
-* Added Loading screen for unpacking comics
+### 4. Configure
 
-**v0.3b**
-* Added Some basic application logging (incomplete)
-* Added auto scroll to top on Comic Load and Entering a new directory
-* Added support for GIF and PNG
-* Corrected Logo and Loading to not rely on external address
-* Added info div and link
-* Added better error handling for running in production 
+Set the path to your comics folder:
 
-**v0.4b**
-* Removed dependency for hardcoded urls
-* Updated loading screen 
-* Added tornado front end ( for production)
-* Abstracted views to templates
-* Improved Logging
+```bash
+export COMIC_DIR="/path/to/your/comics"
+export SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+```
 
-**v0.5b**
-* Large style improvements ( Thank you Colin )
-* Added ability to request a comic
-* Random background images
-* Added Home button
+### 5. Add beta keys
 
-**v0.5.1b**
-* Style fixes
-* I suck at CSS
+Each line in `betaKeys` is one valid key:
 
-**v0.6b**
-* Added music to the home page ( random choice of 8 comic book TV and Movie theme songs songs ) 
+```
+mysecretkey123
+anotherkey456
+```
 
-**v0.7b**
-* Added loading screen at "/" endpoint. Moved what was "/" to "/welcome.html"
-* Added script for counting number of comics - added count to welcome.html 
-* Added "Report A Problem" feature and endpoint
-* More style stuff
-* I may be tinkering with stuff too much . . . It's late
+To disable authentication entirely, set `USE_AUTH=false`.
 
-**v0.8b**
-* Added session authentication using redis and beaker
-* More style stuff
-* Added jquery
+### 6. Start the server
 
-**v0.9b**
-* Sessions - Now sends user back to the dir they were last in. 
-* Sessions - Now remember the last comic the user read and displays it's name 
-* Sessions - Sessions are awesome.
+```bash
+python3 app.py
+```
 
-**v1.0b**
-* Fixed Terrible sorting issue.
-* Improved sessions
-* Disabled a bunch of debug printing
-* MILESTONE - Hit 10 Revisions - Fixed Sorting bug
+Open [http://localhost:5000](http://localhost:5000) and log in with a beta key.
 
-## HELP:
+---
 
-Feel free to send me a message! I will be glad to explain my work.
+## Development Mode
+
+Run the Flask API and the Vite dev server simultaneously:
+
+**Terminal 1 — backend:**
+```bash
+export COMIC_DIR="/path/to/comics"
+export DEBUG=true
+python3 app.py
+```
+
+**Terminal 2 — frontend:**
+```bash
+cd frontend
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). Vite proxies `/api` and `/static` requests to Flask automatically.
+
+---
+
+## Project Structure
+
+```
+comicbookserver/
+├── app.py              # Flask REST API
+├── requirements.txt    # Python dependencies
+├── process.sh          # Archive extraction script (unzip / unrar)
+├── betaKeys            # One beta key per line
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   ├── api/client.js       # Fetch wrappers for all endpoints
+│   │   ├── components/         # Navbar, ComicCard, Modal, …
+│   │   └── pages/              # Login, Browser, Reader
+│   ├── package.json
+│   ├── vite.config.js
+│   └── tailwind.config.js
+└── static/
+    ├── images/         # Logo, backgrounds, UI assets
+    ├── music/          # Optional theme music
+    └── sessions/       # Runtime — extracted comic pages (auto-created)
+```
+
+---
+
+## API Reference
+
+All endpoints are under `/api`. Auth endpoints use Flask sessions (cookie-based).
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/auth/status` | Check if the current session is authenticated |
+| `POST` | `/api/auth/login` | Login with `{ key }` body |
+| `POST` | `/api/auth/logout` | Clear session |
+| `GET` | `/api/comics/browse?dir=` | List directories and comics |
+| `POST` | `/api/comics/open` | Extract a comic into a session. Body: `{ path }` |
+| `GET` | `/api/comics/pages?sessionId=` | Return image URLs for an open comic session |
+| `POST` | `/api/request` | Submit a comic request. Body: `{ comic }` |
+| `POST` | `/api/issue` | Submit a bug report. Body: `{ description }` |
+
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `COMIC_DIR` | *(required)* | Absolute path to your comics folder |
+| `SECRET_KEY` | `change-me-in-production-please` | Flask session secret — **change this** |
+| `PORT` | `5000` | Port to listen on |
+| `DEBUG` | `false` | Enable Flask debug mode |
+| `USE_AUTH` | `true` | Set to `false` to disable beta-key auth |
+
+---
+
+## Comic Format Support
+
+| Format | Extension | Notes |
+|--------|-----------|-------|
+| Comic Book RAR | `.cbr` | Requires `unrar` |
+| Comic Book ZIP | `.cbz` | Requires `unzip` |
+
+---
+
+## Session Cleanup
+
+Extracted comic sessions live in `static/sessions/`. They are not cleaned up automatically. To purge old sessions:
+
+```bash
+rm -rf static/sessions/*/
+```
+
+Or via cron to clear sessions older than 24 hours:
+
+```bash
+find static/sessions -mindepth 1 -maxdepth 1 -type d -mtime +1 -exec rm -rf {} +
+```
+
+---
+
+## Version History
+
+**v2.0**
+- Complete rewrite with React 18 + Vite + Tailwind CSS frontend
+- Python 3 Flask REST API (replaces Python 2 / Jinja2 template approach)
+- Removed Redis/Beaker dependency — uses Flask's built-in sessions
+- Dark-themed UI with comic-book aesthetic, keyboard navigation in reader
+- Breadcrumb navigation, comic count, shimmer loading skeletons
+- Comic request and issue report modals
+
+**v1.0b** — v0.1a
+> Original Python 2 / jQuery implementation. See git history for details.
+
+---
+
+## License
+
+MIT
