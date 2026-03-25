@@ -16,13 +16,27 @@ async function apiFetch(path, options = {}) {
 // ── Auth ───────────────────────────────────────────────────────────────────────
 export const getAuthStatus = () => apiFetch('/api/auth/status')
 
-export const login = (key) =>
+export const login = (email, password) =>
   apiFetch('/api/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ key }),
+    body: JSON.stringify({ email, password }),
+  })
+
+export const register = (username, email, password, inviteToken = '') =>
+  apiFetch('/api/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ username, email, password, inviteToken }),
   })
 
 export const logout = () => apiFetch('/api/auth/logout', { method: 'POST' })
+
+export const getMe = () => apiFetch('/api/auth/me')
+
+export const updateMe = (updates) =>
+  apiFetch('/api/auth/me', {
+    method: 'PUT',
+    body: JSON.stringify(updates),
+  })
 
 // ── Comics ─────────────────────────────────────────────────────────────────────
 export const browseComics = (dir = '') =>
@@ -37,6 +51,8 @@ export const openComic = (path) =>
 export const getComicPages = (sessionId) =>
   apiFetch(`/api/comics/pages?sessionId=${sessionId}`)
 
+export const getReadingHistory = () => apiFetch('/api/comics/history')
+
 // ── Feedback ───────────────────────────────────────────────────────────────────
 export const requestComic = (comic) =>
   apiFetch('/api/request', {
@@ -49,3 +65,32 @@ export const reportIssue = (description) =>
     method: 'POST',
     body: JSON.stringify({ description }),
   })
+
+// ── Admin ──────────────────────────────────────────────────────────────────────
+export const getAdminStats = () => apiFetch('/api/admin/stats')
+
+export const getAdminUsers = (page = 1, search = '') =>
+  apiFetch(`/api/admin/users?page=${page}&search=${encodeURIComponent(search)}`)
+
+export const updateAdminUser = (id, updates) =>
+  apiFetch(`/api/admin/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(updates),
+  })
+
+export const deleteAdminUser = (id) =>
+  apiFetch(`/api/admin/users/${id}`, { method: 'DELETE' })
+
+export const getAdminInvites = () => apiFetch('/api/admin/invites')
+
+export const createAdminInvite = (note = '', expiresDays = null) =>
+  apiFetch('/api/admin/invites', {
+    method: 'POST',
+    body: JSON.stringify({ note, expiresDays }),
+  })
+
+export const deleteAdminInvite = (id) =>
+  apiFetch(`/api/admin/invites/${id}`, { method: 'DELETE' })
+
+export const getAdminInventory = (page = 1, search = '') =>
+  apiFetch(`/api/admin/inventory?page=${page}&search=${encodeURIComponent(search)}`)

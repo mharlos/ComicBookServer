@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { browseComics, openComic, logout, reportIssue } from '../api/client'
+import { browseComics, openComic, reportIssue } from '../api/client'
 import ComicCard from '../components/ComicCard'
 import DirectoryCard from '../components/DirectoryCard'
 import Navbar from '../components/Navbar'
 import Modal from '../components/Modal'
 
-export default function Browser({ onLogout }) {
+export default function Browser({ user, onLogout }) {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const currentDir = searchParams.get('dir') || ''
@@ -53,11 +53,6 @@ export default function Browser({ onLogout }) {
     }
   }
 
-  async function handleLogout() {
-    try { await logout() } catch { /* ignore */ }
-    onLogout()
-  }
-
   async function handleIssueSubmit(e) {
     e.preventDefault()
     if (!issueText.trim()) return
@@ -72,9 +67,10 @@ export default function Browser({ onLogout }) {
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
       <Navbar
+        user={user}
         breadcrumbs={breadcrumbs}
         onNavigate={handleNavigate}
-        onLogout={handleLogout}
+        onLogout={onLogout}
         onReportIssue={() => { setShowIssue(true); setIssueSentFlag(false); setIssueSent('') }}
         totalComics={data?.totalComics}
       />

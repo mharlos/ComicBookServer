@@ -2,205 +2,153 @@
 
 A self-hosted web application for browsing and reading digital comic books (CBR and CBZ) in any modern browser.
 
-**Stack:** Python 3 / Flask REST API · React 18 · Vite · Tailwind CSS
+**Stack:** Python 3 / Flask · React 18 · Vite · Tailwind CSS · SQLite · Docker
 
 ---
 
 ## Features
 
-- Browse your comic library with a clean, dark-themed UI
-- Read CBR and CBZ comics right in the browser — page by page
-- Keyboard navigation in the reader (← → Esc)
-- Beta-key access control
+- Browse your comic library with a clean, dark-themed, mobile-friendly UI
+- Read CBR and CBZ comics in the browser — full-screen page reader
+- Keyboard navigation (← → Esc) and click zones
+- **User accounts** with email + password (invite-only registration)
+- **Admin dashboard** — stats, user management, invite system, comic inventory
+- **Invite system** — generate single-use links with optional expiry
+- Reading history per user
 - Submit comic requests and bug reports
-- Fully responsive — works on desktop, tablet, and mobile
+- Docker deployment — one command to run
+- Fully responsive — desktop, tablet, and mobile
 
 ---
 
-## Requirements
+## Quick Start (Docker)
 
-| Tool | Version |
-|------|---------|
-| Python | 3.10+ |
-| Node.js | 18+ |
-| npm | 9+ |
-| unzip | any |
-| unrar | any |
-
----
-
-## Quick Start
-
-### 1. Clone the repo
+The easiest way to run ComicBookServer:
 
 ```bash
-git clone https://github.com/mharlos/comicbookserver.git
-cd comicbookserver
+# 1. Clone the repo
+git clone <repo-url> && cd ComicBookServer
+
+# 2. Create your .env file
+cp .env.example .env
+# Edit .env: set COMIC_DIR and SECRET_KEY
+
+# 3. Start
+docker compose up -d
+
+# 4. Open http://localhost:8080
+# Register the first account — it becomes admin automatically (no invite needed)
 ```
 
-### 2. Set up the Python backend
+---
+
+## First-time setup
+
+1. Open `http://localhost:8080` and click **Create an account**
+2. Register with any email/username/password (no invite token needed for the very first user)
+3. You are now the **admin** — log in to `/admin` to invite other users
+
+---
+
+## Docker Compose environment variables
+
+| Variable    | Required | Description |
+|-------------|----------|-------------|
+| `COMIC_DIR` | Yes      | Path to your comics folder on the host (e.g. `/mnt/nas/comics`) |
+| `SECRET_KEY`| Yes      | Long random string for signing sessions. Generate: `python3 -c "import secrets; print(secrets.token_hex(32))"` |
+| `DATA_DIR`  | No       | Where to store the database and logs. Default: `/app/data` (inside container, persisted via volume) |
+| `PORT`      | No       | Internal port. Default: `8080` |
+
+---
+
+## Manual setup (development)
+
+**Requirements:**
+- Python 3.11+
+- Node.js 20+
+- `unzip` and `unrar-free` system packages
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+# Backend
 pip install -r requirements.txt
-```
 
-### 3. Build the React frontend
+# Frontend
+cd frontend && npm install && npm run build && cd ..
 
-```bash
-cd frontend
-npm install
-npm run build
-cd ..
-```
-
-### 4. Configure
-
-Set the path to your comics folder:
-
-```bash
-export COMIC_DIR="/path/to/your/comics"
-export SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
-```
-
-### 5. Add beta keys
-
-Each line in `betaKeys` is one valid key:
-
-```
-mysecretkey123
-anotherkey456
-```
-
-To disable authentication entirely, set `USE_AUTH=false`.
-
-### 6. Start the server
-
-```bash
-python3 app.py
-```
-
-Open [http://localhost:5000](http://localhost:5000) and log in with a beta key.
-
----
-
-## Development Mode
-
-Run the Flask API and the Vite dev server simultaneously:
-
-**Terminal 1 — backend:**
-```bash
+# Run
 export COMIC_DIR="/path/to/comics"
-export DEBUG=true
+export SECRET_KEY="your-secret-key"
 python3 app.py
 ```
 
-**Terminal 2 — frontend:**
+**Dev mode (hot reload):**
 ```bash
-cd frontend
-npm run dev
-```
+# Terminal 1 — Flask
+export COMIC_DIR="/path/to/comics"
+python3 app.py
 
-Open [http://localhost:3000](http://localhost:3000). Vite proxies `/api` and `/static` requests to Flask automatically.
-
----
-
-## Project Structure
-
-```
-comicbookserver/
-├── app.py              # Flask REST API
-├── requirements.txt    # Python dependencies
-├── process.sh          # Archive extraction script (unzip / unrar)
-├── betaKeys            # One beta key per line
-├── frontend/
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   │   ├── api/client.js       # Fetch wrappers for all endpoints
-│   │   ├── components/         # Navbar, ComicCard, Modal, …
-│   │   └── pages/              # Login, Browser, Reader
-│   ├── package.json
-│   ├── vite.config.js
-│   └── tailwind.config.js
-└── static/
-    ├── images/         # Logo, backgrounds, UI assets
-    ├── music/          # Optional theme music
-    └── sessions/       # Runtime — extracted comic pages (auto-created)
+# Terminal 2 — Vite (proxies /api to Flask)
+cd frontend && npm run dev
+# Open http://localhost:3000
 ```
 
 ---
 
 ## API Reference
 
-All endpoints are under `/api`. Auth endpoints use Flask sessions (cookie-based).
-
+### Auth
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/api/auth/status` | Check if the current session is authenticated |
-| `POST` | `/api/auth/login` | Login with `{ key }` body |
-| `POST` | `/api/auth/logout` | Clear session |
-| `GET` | `/api/comics/browse?dir=` | List directories and comics |
-| `POST` | `/api/comics/open` | Extract a comic into a session. Body: `{ path }` |
-| `GET` | `/api/comics/pages?sessionId=` | Return image URLs for an open comic session |
-| `POST` | `/api/request` | Submit a comic request. Body: `{ comic }` |
-| `POST` | `/api/issue` | Submit a bug report. Body: `{ description }` |
+| GET  | `/api/auth/status`   | Current session status + user info |
+| POST | `/api/auth/register` | Register with invite token (first user = admin, no token) |
+| POST | `/api/auth/login`    | Login with email + password |
+| POST | `/api/auth/logout`   | Clear session |
+| GET  | `/api/auth/me`       | Current user profile |
+| PUT  | `/api/auth/me`       | Update profile / change password |
+
+### Comics
+| Method | Path | Description |
+|--------|------|-------------|
+| GET  | `/api/comics/browse?dir=` | List directories and comics |
+| POST | `/api/comics/open`        | Extract and open a comic |
+| GET  | `/api/comics/pages?sessionId=` | Get extracted page image URLs |
+| GET  | `/api/comics/history`     | Reading history for current user |
+
+### Admin (requires admin role)
+| Method | Path | Description |
+|--------|------|-------------|
+| GET    | `/api/admin/stats`          | Dashboard statistics |
+| GET    | `/api/admin/users`          | List users (paginated, searchable) |
+| PUT    | `/api/admin/users/:id`      | Update user role/active status |
+| DELETE | `/api/admin/users/:id`      | Delete user |
+| GET    | `/api/admin/invites`        | List all invites |
+| POST   | `/api/admin/invites`        | Create invite link |
+| DELETE | `/api/admin/invites/:id`    | Revoke unused invite |
+| GET    | `/api/admin/inventory`      | Browse comic inventory (paginated, searchable) |
+
+### Feedback
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/request` | Submit a comic request |
+| POST | `/api/issue`   | Report a problem |
 
 ---
 
-## Environment Variables
+## Data storage
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `COMIC_DIR` | *(required)* | Absolute path to your comics folder |
-| `SECRET_KEY` | `change-me-in-production-please` | Flask session secret — **change this** |
-| `PORT` | `5000` | Port to listen on |
-| `DEBUG` | `false` | Enable Flask debug mode |
-| `USE_AUTH` | `true` | Set to `false` to disable beta-key auth |
-
----
-
-## Comic Format Support
-
-| Format | Extension | Notes |
-|--------|-----------|-------|
-| Comic Book RAR | `.cbr` | Requires `unrar` |
-| Comic Book ZIP | `.cbz` | Requires `unzip` |
+| What | Where |
+|------|-------|
+| User accounts + invites + history | `DATA_DIR/comics.db` (SQLite) |
+| Access log | `DATA_DIR/access.log` |
+| Comic requests | `DATA_DIR/request.txt` |
+| Issue reports  | `DATA_DIR/issue.txt` |
+| Extracted comic sessions | `static/sessions/` |
 
 ---
 
-## Session Cleanup
+## User roles
 
-Extracted comic sessions live in `static/sessions/`. They are not cleaned up automatically. To purge old sessions:
-
-```bash
-rm -rf static/sessions/*/
-```
-
-Or via cron to clear sessions older than 24 hours:
-
-```bash
-find static/sessions -mindepth 1 -maxdepth 1 -type d -mtime +1 -exec rm -rf {} +
-```
-
----
-
-## Version History
-
-**v2.0**
-- Complete rewrite with React 18 + Vite + Tailwind CSS frontend
-- Python 3 Flask REST API (replaces Python 2 / Jinja2 template approach)
-- Removed Redis/Beaker dependency — uses Flask's built-in sessions
-- Dark-themed UI with comic-book aesthetic, keyboard navigation in reader
-- Breadcrumb navigation, comic count, shimmer loading skeletons
-- Comic request and issue report modals
-
-**v1.0b** — v0.1a
-> Original Python 2 / jQuery implementation. See git history for details.
-
----
-
-## License
-
-MIT
+| Role  | Capabilities |
+|-------|-------------|
+| user  | Browse library, read comics, submit requests/issues, view own history |
+| admin | All user capabilities + admin panel (user management, invites, inventory, stats) |

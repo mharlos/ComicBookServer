@@ -1,8 +1,73 @@
-import { useState } from 'react'
-import { requestComic } from '../api/client'
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { requestComic, logout } from '../api/client'
 import Modal from './Modal'
 
-export default function Navbar({ breadcrumbs, onNavigate, onLogout, onReportIssue, totalComics }) {
+function UserMenu({ user, onLogout }) {
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+  const ref  = useRef(null)
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  async function handleLogout() {
+    await logout().catch(() => {})
+    onLogout()
+  }
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-2 hover:opacity-80 transition"
+        aria-label="User menu"
+      >
+        <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-zinc-950 font-bold text-sm">
+          {(user?.username || '?')[0].toUpperCase()}
+        </div>
+        <span className="hidden sm:block text-sm text-zinc-300">{user?.username}</span>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-48 bg-zinc-900 border border-zinc-700 rounded-xl shadow-xl z-50 overflow-hidden">
+          <div className="px-4 py-3 border-b border-zinc-800">
+            <p className="text-sm font-medium text-white truncate">{user?.username}</p>
+            <p className="text-xs text-zinc-500 truncate">{user?.email}</p>
+          </div>
+          <div className="py-1">
+            <button
+              onClick={() => { setOpen(false); navigate('/account') }}
+              className="w-full text-left px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 transition"
+            >
+              Account Settings
+            </button>
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => { setOpen(false); navigate('/admin') }}
+                className="w-full text-left px-4 py-2.5 text-sm text-yellow-400 hover:text-yellow-300 hover:bg-zinc-800 transition"
+              >
+                Admin Panel
+              </button>
+            )}
+            <button
+              onClick={handleLogout}
+              className="w-full text-left px-4 py-2.5 text-sm text-zinc-500 hover:text-red-400 hover:bg-zinc-800 transition"
+            >
+              Log out
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function Navbar({ user, breadcrumbs, onNavigate, onLogout, onReportIssue, totalComics }) {
   const [showRequest, setShowRequest] = useState(false)
   const [requestText, setRequestText] = useState('')
   const [requestSent, setRequestSentFlag] = useState(false)
@@ -86,16 +151,7 @@ export default function Navbar({ breadcrumbs, onNavigate, onLogout, onReportIssu
                 ⚑ Issue
               </button>
 
-              <button
-                onClick={onLogout}
-                className="
-                  text-sm px-3 py-1.5 rounded-lg
-                  bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white
-                  transition border border-zinc-700
-                "
-              >
-                Log out
-              </button>
+              <UserMenu user={user} onLogout={onLogout} />
             </div>
           </div>
         </div>
