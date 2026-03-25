@@ -1,87 +1,154 @@
-Comic Book Server
-===============
+# ComicBook Server
 
-A web API/Application that serves up CBR and CBZ comics and displays them in the browser.
+A self-hosted web application for browsing and reading digital comic books (CBR and CBZ) in any modern browser.
 
+**Stack:** Python 3 / Flask · React 18 · Vite · Tailwind CSS · SQLite · Docker
 
-## DESCRIPTION:
+---
 
-This is a web API/Application wriiten in python and using flask. ( pip install flask ) 
+## Features
 
-####This allows you to read your digital comic collection in a web browser on any device. 
+- Browse your comic library with a clean, dark-themed, mobile-friendly UI
+- Read CBR and CBZ comics in the browser — full-screen page reader
+- Keyboard navigation (← → Esc) and click zones
+- **User accounts** with email + password (invite-only registration)
+- **Admin dashboard** — stats, user management, invite system, comic inventory
+- **Invite system** — generate single-use links with optional expiry
+- Reading history per user
+- Submit comic requests and bug reports
+- Docker deployment — one command to run
+- Fully responsive — desktop, tablet, and mobile
 
+---
 
-In its current state it will take a folder of comics ( CBZ and CBR only right now ) and will allow a user to browse through all subdirectories and select comics.
+## Quick Start (Docker)
 
-Once selected the comic is copied to a static folder, unpacked, embedded into some html and displayed. Each comic is served up from a unique folder.
+The easiest way to run ComicBookServer:
 
-###Currently you will want to clean out the unique folders generated in the static folder every once an a while. It does not have a janitor. 
+```bash
+# 1. Clone the repo
+git clone <repo-url> && cd ComicBookServer
 
+# 2. Create your .env file
+cp .env.example .env
+# Edit .env: set COMIC_DIR and SECRET_KEY
 
-Check the Installation notes out [HERE](https://github.com/mharlos/ComicBookServer/wiki/Installation)
+# 3. Start
+docker compose up -d
 
+# 4. Open http://localhost:8080
+# Register the first account — it becomes admin automatically (no invite needed)
+```
 
+---
 
+## First-time setup
 
-## VERSION HISTORY:
+1. Open `http://localhost:8080` and click **Create an account**
+2. Register with any email/username/password (no invite token needed for the very first user)
+3. You are now the **admin** — log in to `/admin` to invite other users
 
-**v0.1a** 
-* Core Functionality, and some html styling. IT FUCKING WORKS!!
+---
 
-**v0.2a**
-* Added Loading screen for unpacking comics
+## Docker Compose environment variables
 
-**v0.3b**
-* Added Some basic application logging (incomplete)
-* Added auto scroll to top on Comic Load and Entering a new directory
-* Added support for GIF and PNG
-* Corrected Logo and Loading to not rely on external address
-* Added info div and link
-* Added better error handling for running in production 
+| Variable    | Required | Description |
+|-------------|----------|-------------|
+| `COMIC_DIR` | Yes      | Path to your comics folder on the host (e.g. `/mnt/nas/comics`) |
+| `SECRET_KEY`| Yes      | Long random string for signing sessions. Generate: `python3 -c "import secrets; print(secrets.token_hex(32))"` |
+| `DATA_DIR`  | No       | Where to store the database and logs. Default: `/app/data` (inside container, persisted via volume) |
+| `PORT`      | No       | Internal port. Default: `8080` |
 
-**v0.4b**
-* Removed dependency for hardcoded urls
-* Updated loading screen 
-* Added tornado front end ( for production)
-* Abstracted views to templates
-* Improved Logging
+---
 
-**v0.5b**
-* Large style improvements ( Thank you Colin )
-* Added ability to request a comic
-* Random background images
-* Added Home button
+## Manual setup (development)
 
-**v0.5.1b**
-* Style fixes
-* I suck at CSS
+**Requirements:**
+- Python 3.11+
+- Node.js 20+
+- `unzip` and `unrar-free` system packages
 
-**v0.6b**
-* Added music to the home page ( random choice of 8 comic book TV and Movie theme songs songs ) 
+```bash
+# Backend
+pip install -r requirements.txt
 
-**v0.7b**
-* Added loading screen at "/" endpoint. Moved what was "/" to "/welcome.html"
-* Added script for counting number of comics - added count to welcome.html 
-* Added "Report A Problem" feature and endpoint
-* More style stuff
-* I may be tinkering with stuff too much . . . It's late
+# Frontend
+cd frontend && npm install && npm run build && cd ..
 
-**v0.8b**
-* Added session authentication using redis and beaker
-* More style stuff
-* Added jquery
+# Run
+export COMIC_DIR="/path/to/comics"
+export SECRET_KEY="your-secret-key"
+python3 app.py
+```
 
-**v0.9b**
-* Sessions - Now sends user back to the dir they were last in. 
-* Sessions - Now remember the last comic the user read and displays it's name 
-* Sessions - Sessions are awesome.
+**Dev mode (hot reload):**
+```bash
+# Terminal 1 — Flask
+export COMIC_DIR="/path/to/comics"
+python3 app.py
 
-**v1.0b**
-* Fixed Terrible sorting issue.
-* Improved sessions
-* Disabled a bunch of debug printing
-* MILESTONE - Hit 10 Revisions - Fixed Sorting bug
+# Terminal 2 — Vite (proxies /api to Flask)
+cd frontend && npm run dev
+# Open http://localhost:3000
+```
 
-## HELP:
+---
 
-Feel free to send me a message! I will be glad to explain my work.
+## API Reference
+
+### Auth
+| Method | Path | Description |
+|--------|------|-------------|
+| GET  | `/api/auth/status`   | Current session status + user info |
+| POST | `/api/auth/register` | Register with invite token (first user = admin, no token) |
+| POST | `/api/auth/login`    | Login with email + password |
+| POST | `/api/auth/logout`   | Clear session |
+| GET  | `/api/auth/me`       | Current user profile |
+| PUT  | `/api/auth/me`       | Update profile / change password |
+
+### Comics
+| Method | Path | Description |
+|--------|------|-------------|
+| GET  | `/api/comics/browse?dir=` | List directories and comics |
+| POST | `/api/comics/open`        | Extract and open a comic |
+| GET  | `/api/comics/pages?sessionId=` | Get extracted page image URLs |
+| GET  | `/api/comics/history`     | Reading history for current user |
+
+### Admin (requires admin role)
+| Method | Path | Description |
+|--------|------|-------------|
+| GET    | `/api/admin/stats`          | Dashboard statistics |
+| GET    | `/api/admin/users`          | List users (paginated, searchable) |
+| PUT    | `/api/admin/users/:id`      | Update user role/active status |
+| DELETE | `/api/admin/users/:id`      | Delete user |
+| GET    | `/api/admin/invites`        | List all invites |
+| POST   | `/api/admin/invites`        | Create invite link |
+| DELETE | `/api/admin/invites/:id`    | Revoke unused invite |
+| GET    | `/api/admin/inventory`      | Browse comic inventory (paginated, searchable) |
+
+### Feedback
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/request` | Submit a comic request |
+| POST | `/api/issue`   | Report a problem |
+
+---
+
+## Data storage
+
+| What | Where |
+|------|-------|
+| User accounts + invites + history | `DATA_DIR/comics.db` (SQLite) |
+| Access log | `DATA_DIR/access.log` |
+| Comic requests | `DATA_DIR/request.txt` |
+| Issue reports  | `DATA_DIR/issue.txt` |
+| Extracted comic sessions | `static/sessions/` |
+
+---
+
+## User roles
+
+| Role  | Capabilities |
+|-------|-------------|
+| user  | Browse library, read comics, submit requests/issues, view own history |
+| admin | All user capabilities + admin panel (user management, invites, inventory, stats) |

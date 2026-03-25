@@ -1,2 +1,0 @@
-#!/bin/bash
-cd /home/bruce/ComicBookServer/ && twistd web --logfile=/var/log/comics.log --port=80 --wsgi cbv.app

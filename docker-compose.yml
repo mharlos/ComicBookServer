@@ -1,0 +1,29 @@
+services:
+  comicserver:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount your comics directory (read-only)
+      - ${COMIC_DIR:-./comics}:/comics:ro
+      # Persistent database + logs
+      - comic_data:/app/data
+      # Extracted comic sessions (can be cleared between restarts)
+      - comic_sessions:/app/static/sessions
+    environment:
+      COMIC_DIR: /comics
+      SECRET_KEY: ${SECRET_KEY:-change-me-use-a-long-random-string}
+      DATA_DIR: /app/data
+      PORT: 8080
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/auth/status')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  comic_data:
+  comic_sessions:
